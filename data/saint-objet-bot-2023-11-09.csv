@@ -1,0 +1,367 @@
+month,day,singular,plural,genre
+1,1,veisalgie,veisalgies,f
+1,2,ankylostome,ankylostomes,m
+1,3,apex,apexes,m
+1,4,arlequin,arlequins,m
+1,5,bengali,bengalis,m
+1,6,bouquetin,bouquetins,m
+1,7,cancrelat,cancrelats,m
+1,8,cerf-volant,cerfs-volants,m
+1,9,colibri,colibris,m
+1,10,dromadaire,dromadaires,m
+1,11,embrouillamini,embrouillaminis,m
+1,12,fauconneau,fauconeaux,m
+1,13,gambette,gambettes,f
+1,14,hérisson, hérissons,m
+1,15,javelot,javelots,m
+1,16,kangourou,kangourous,m
+1,17,lampion,lampions,m
+1,18,manuscrit,manuscrits,m
+1,19,quignon,quignons,m
+1,20,tablier,tabliers,m
+1,21,zorglub,zorglubs,m
+1,22,pataquès,pataquès,m
+1,23,bobèche,bobèches,f
+1,24,zézaiement,zézaiements,m
+1,25,flibustier,flibustiers,m
+1,26,mirliton,mirlitons,m
+1,27,craspouille,craspouilles,f
+1,28,zigouigoui,zigouigouis,m
+1,29,faribole,fariboles,f
+1,30,pantouflette,pantouflettes,f
+1,31,zinzin,zinzins,m
+2,1,bibelot,bibelots,m
+2,2,ukulélé,ukulélés,m
+2,3,grigris,grigris,m
+2,4,crinoline,crinolines,f
+2,5,turlutaine,turlutaines,f
+2,6,boudeuse,boudeuses,f
+2,7,tralala,tralalas,m
+2,8,carambolage,carambolages,m
+2,9,frimousse,frimousses,f
+2,10,catafalque,catafalques,m
+2,11,chicane,chicanes,f
+2,12,barbichette,barbichettes,f
+2,13,croquignole,croquignoles,m
+2,14,rouleau de sopalin,rouleaux de sopalin,m
+2,15,clavicule,clavicules,f
+2,16,bambinette,bambinettes,f
+2,17,sporange,sporanges,m
+2,18,fléole,fléoles,f
+2,19,goubelin,goubelins,m
+2,20,bélin,bélins,m
+2,21,grébiche,grébiches,f
+2,22,pipistrelle,pipistrelles,f
+2,23,badine,badines,f
+2,24,guttule,guttules,f
+2,25,sautoir,sautoirs,m
+2,26,tourniquet,tourniquets,m
+2,27,grenouillère,grenouillères,f
+2,28,torsade,torsades,f
+2,29,calicot,calicots,m
+3,1,gousset,goussets,m
+3,2,tournebille,tournebilles,f
+3,3,gibelotte,gibelottes,f
+3,4,cabestan,cabestans,m
+3,5,mélopée,mélodées,f
+3,6,galurin,galurins,m
+3,7,joug,jougs,m
+3,8,cabriole,cabrioles,f
+3,9,attache parisienne,attaches parisiennes,f
+3,10,bac à charbon,bacs à charbon,m
+3,11,béquille,béquilles,f
+3,12,boussole,boussoles,f
+3,13,caméra argentique,caméras argentiques,f
+3,14,canne,cannes,f
+3,15,cloche,cloches,f
+3,16,clou,clous,m
+3,17,coton-tige,cotons-tiges,m
+3,18,disque vinyle,disques vinyles,m
+3,19,encrier,encriers,m
+3,20,fer à repasser,fers à repasser,m
+3,21,fusil à pompe,fusils à pompe,m
+3,22,gourde,gourdes,f
+3,23,imprimante à marguerite,imprimantes à marguerite,f
+3,24,tendu-de-majeur,doigts d'honneur,m
+3,25,machine à écrire,machines à écrire,f
+3,26,poignée de porte,poignées de porte,f
+3,27,savon de marseille,savons de marseille,m
+3,28,stylo à plume,stylos à plume,m
+3,29,téléviseur cathodique,téléviseurs cathodiques,m
+3,30,urne funéraire,urnes funéraires,f
+3,31,balai,balais,m
+4,1,microplastique,microplastiques,m
+4,2,bougie,bougies,f
+4,3,cabine téléphonique,cabines téléphoniques,f
+4,4,canapé,canapés,m
+4,5,carte postale,cartes postales,f
+4,6,ceinture,ceintures,f
+4,7,engrenage,engrenages,m
+4,8,escalier,escaliers,m
+4,9,singulier,pluriel,genre
+4,10,acanthe,acanthes,f
+4,11,humus,humus,m
+4,12,entorque,entorques,f
+4,13,fogon,fogons,m
+4,14,gambain,gambains,m
+4,15,chasuble,chasubles,f
+4,16,clape,clapes,f
+4,17,mandorle,mandorles,f
+4,18,occiput,occiputs,m
+4,19,diodon,diodons,m
+4,20,tricorne,tricornes,m
+4,21,spume,spumes,f
+4,22,manchon,manchons,m
+4,23,limaçon,limaçons,m
+4,24,levraut,levrauts,m
+4,25,gymkhana,gymkhanas,m
+4,26,camas,camasses,f
+4,27,queue-de-pie,queues-de-pie,f
+4,28,sterculia,sterculias,f
+4,29,perruque,perruques,f
+4,30,traille,trailles,f
+5,1,quinquet,quinquets,m
+5,2,pastille,pastilles,f
+5,3,francisque,francisques,f
+5,4,pirouette,pirouettes,f
+5,5,marmouset,marmousets,m
+5,6,pédicelle,pédicelles,m
+5,7,hypsomètre,hypsomètres,m
+5,8,lambrequin,lambrequins,m
+5,9,cribellum,cribellums,m
+5,10,hélicoïde,hélicoïdes,f
+5,11,quenouille,quenouilles,f
+5,12,zythum,zytha,m
+5,13,sarbacane,sarbacanes,f
+5,14,turion,turions,m
+5,15,quinaouat,quinaouats,m
+5,16,sémaphore,sémaphores,f
+5,17,crispatule,crispatules,f
+5,18,zist,zists,m
+5,19,chiquenaude,chiquenaudes,f
+5,20,sagouin,sagouins,m
+5,21,borborygme,borborygmes,m
+5,22,zéphyr,zéphyrs,m
+5,23,schnock,schnocks,m
+5,24,pendeloque,pendeloques,f
+5,25,falbala,falbalas,m
+5,26,nycthémère,nycthémères,m
+5,27,houppier,houppiers,m
+5,28,suaire,suaires,m
+5,29,pillon,pillons,m
+5,30,goulot,goulots,m
+5,31,bourdalou,bourdalous,m
+6,1,zibeline,zibelines,f
+6,2,turpitude,turpitudes,f
+6,3,carafon,carafons,m
+6,4,roubignole,roubignoles,f
+6,5,cantharide,cantharides,f
+6,6,pédoncule,pédoncules,m
+6,7,élytre,élytres,m
+6,8,cressonnière,cressonnières,f
+6,9,araignée,araignées,f
+6,10,sarment,sarments,m
+6,11,argousin,argousins,m
+6,12,poudingue,poudingues,m
+6,13,pandiculation,pandiculations,f
+6,14,gaudriole,gaudrioles,f
+6,15,chenapan,chenapans,m
+6,16,carabistouille,carabistouilles,f
+6,17,baliverne,balivernes,f
+6,18,histrion,histrions,m
+6,19,babiole,babioles,f
+6,20,pétouille,pétouilles,f
+6,21,baragouin,baragouins,m
+6,22,patatras,patatras,m
+6,23,alambic,alambics,m
+6,24,billevesée,billevesées,f
+6,25,rigolboche,rigolboches,f
+6,26,turlupin,turlupins,m
+6,27,turlurette,turlurettes,f
+6,28,guignol,guignols,m
+6,29,bille-molle,billes-molles,f
+6,30,brimborion,brimborions,m
+7,1,mirliflore,mirliflores,f
+7,2,clapiotte,clapiottes,f
+7,3,gratouillot,gratouillots,m
+7,4,légumineur,légumineurs,m
+7,5,micro-ondulor,micro-ondulors,m
+7,6,frite-magique,frites-magiques,f
+7,7,chaussettophone,chaussettophones,m
+7,8,réveil-tartine,réveils-tartines,m
+7,9,horloge-moussante,horloges-moussantes,f
+7,10,canapélicoptère,canapélicoptères,m
+7,11,éponge-lumineuse,éponges-lumineuses,f
+7,12,spatulon,spatulons,m
+7,13,vaissellier-volant,vaisselliers-volants,m
+7,14,boîte-à-bêtises,boîtes-à-bêtises,f
+7,15,télé-poubelle,télé-poubelles,f
+7,16,baignoire-parlante,baignoires-parlantes,f
+7,17,armoire-à-glissade,armoires-à-glissade,f
+7,18,glaciotronique,glaciotroniques,m
+7,19,grille-pain de l'espace,grilles-pains de l'espace,m
+7,20,robot-raccommodeur,robots-raccommodeurs,m
+7,21,fourchette-à-comptine,fourchettes-à-comptines,f
+7,22,pantoufle-réactive,pantoufles-réactives,f
+7,23,coussin-péteur,coussins-péteurs,m
+7,24,télé-orbitale,télés-orbitales,f
+7,25,brosse-à-dent sonique,brosses-à-dent soniques,f
+7,26,couette-intelligente,couettes-intelligentes,f
+7,27,pyjama-à-histoires,pyjamas-à-histoires,m
+7,28,bol-à-mystère,bols-à-mystère,m
+7,29,tabouret-téléphone,tabourets-téléphone,m
+7,30,miroir-savant,miroirs-savants,m
+7,31,tapis-volant d'intérieur,tapis-volants d'intérieur,m
+8,1,oreiller-à-musique,oreillers-à-musique,m
+8,2,papier-peint interactif,papiers-peints interactifs,m
+8,3,xylophone,xylophones,m
+8,4,guilloché,guillochés,m
+8,5,djembé,djembés,m
+8,6,caipirinha,caipirinhas,f
+8,7,tzatziki,tzatzikis,n
+8,8,karaoke,karaokes,m
+8,9,kantele,kanteles,f
+8,10,haiku,haikus,m
+8,11,colchique,colchiques,f
+8,12,molinillo,molinillos,m
+8,13,quokka,quokkas,f
+8,14,duduk,duduks,m
+8,15,balalaïka,balalaïkas,f
+8,16,fajitas,fajitas,f
+8,17,bobineau,bobineaux,m
+8,18,fjord,fjords,m
+8,19,tsampa,tsampas,f
+8,20,qipao,qipaos,f
+8,21,boomerang,boomerangs,m
+8,22,cachou,cachous,m
+8,23,sac à dos,sacs à dos,m
+8,24,brosse à dents,brosses à dents,f
+8,25,lampe de bureau,lampes de bureau,f
+8,26,tapis de souris,tapis de souris,m
+8,27,pot de fleurs,pots de fleurs,m
+8,28,brosse à cheveux,brosses à cheveux,f
+8,29,boucle d'oreille,boucles d'oreilles,f
+8,30,manette de jeu,manettes de jeu,f
+8,31,tapis de yoga,tapis de yoga,m
+9,1,corde à sauter,cordes à sauter,f
+9,2,haltère,haltères,m
+9,3,trottinette,trottinettes,f
+9,4,sac de couchage,sacs de couchage,m
+9,5,réchaud de camping,réchauds de camping,m
+9,6,chaussure de randonnée,chaussures de randonnée,f
+9,7,taille-crayon,taille-crayons,m
+9,8,agrafeuse,agrafeuses,f
+9,9,aspirateur,aspirateurs,m
+9,10,lave-linge,lave-linges,m
+9,11,sèche-linge,sèche-linges,m
+9,12,machine à coudre,machines à coudre,f
+9,13,serpillère,serpillères,f
+9,14,tronçonneuse,tronçonneuses,f
+9,15,débroussailleuse,débroussailleuses,f
+9,16,motoculteur,motoculteurs,m
+9,17,râteau,râteaux,m
+9,18,clé à molette,clés à molette,f
+9,19,scie circulaire,scies circulaires,f
+9,20,détecteur de fumée,détecteurs de fumée,m
+9,21,caméra de surveillance,caméras de surveillance,f
+9,22,moustiquaire,moustiquaires,f
+9,23,brise-vent,brise-vent,m
+9,24,balcon,balcons,m
+9,25,jardinière,jardinières,f
+9,26,buisson,buissons,m
+9,27,haie,haies,f
+9,28,système d'irrigation,systèmes d'irrigation,m
+9,29,thermomètre,thermomètres,m
+9,30,hygromètre,hygromètres,m
+10,1,luxmètre,luxmètres,m
+10,2,anémomètre,anémomètres,m
+10,3,pluviomètre,pluviomètres,m
+10,4,baromètre,baromètres,m
+10,5,chronomètre,chronomètres,m
+10,6,microscope,microscopes,m
+10,7,télescope,télescopes,m
+10,8,spectroscope,spectroscopes,m
+10,9,conductimètre,conductimètres,m
+10,10,ohmmètre,ohmmètres,m
+10,11,ampermètre,ampermètres,m
+10,12,voltmètre,voltmètres,m
+10,13,oscilloscope,oscilloscopes,m
+10,14,fréquencemètre,fréquencemètres,m
+10,15,analyseur de spectre,analyseurs de spectre,m
+10,16,circuit imprimé,circuits imprimés,m
+10,17,disjoncteur,disjoncteurs,m
+10,18,machine-à-faire-des-trous-dans-les-spaghetti,machines-à-faire-des-trous-dans-les-spaghetti.f,
+10,19,morceau de bois,morceaux de bois,m
+10,20,pot de colle,pots de colle,m
+10,21,paquet cadeau,paquets cadeaux,m
+10,22,cacatoès,cacatoès,f
+10,23,harmonica,harmonicas,m
+10,24,bigoudi,bigoudis,m
+10,25,dent de lait,dents de lait,f
+10,26,bonhomme de neige,bonhommes de neige,m
+10,27,marteau picoreur,marteaux picoreurs,m
+10,28,bande magnétique,bandes magnétiques,f
+10,29,punaise de lit,punaises de lit,f
+10,30,carte de voeux,cartes de voeux,f
+10,31,moins que rien,moins que rien,m
+11,1,tour eiffel,tours eiffel,f
+11,2,symptôme,symptômes,m
+11,3,mamanite,amanites,f
+11,4,cornichon,cornichons,m
+11,5,zinzolin,zinzolins,m
+11,6,jouet à bascule,jouets à bascule,m
+11,7,bloc-notes,blocs-notes,m
+11,8,routoir,routoirs,m
+11,9,guenille,guenilles,f
+11,10,lunette de soleil,lunettes de soleil,f
+11,11,octavin,octavins,m
+11,12,toque à trois cornes,toques à trois cornes,f
+11,13,navire-hôpital,navires-hôpitaux,m
+11,14,sesquiplan,sesquiplan,m
+11,15,baldaquin,baldaquins,m
+11,16,anémoscope,anémoscopes,m
+11,17,clavicythérium,clavicythériums,m
+11,18,certificat de conformité,certificats de conformité,m
+11,19,bonnet de nuit, bonnets de nuit,m
+11,20,atmomètre,atmomètres,m
+11,21,pnéomètre,pnéomètres,m
+11,22,marie-salope,marie-salopes,f
+11,23,lettre de crédit,lettree de crédit,f
+11,24,cithare,cithares,f
+11,25,tramezzino,tramezzinos,,
+11,26,ichcahuipilli,ichcahuipillis,f
+11,27,journal intime,journaux intimes,m
+11,28,harpe celtique,harpes celtiques,f
+11,29,nœud d’agui,nœuds d’agui,m
+11,30,cabotière,cabotière,f
+12,1,pique-œuf,pique-œufs,m
+12,2,revue de contrat,revues de contrats,f
+12,3,grande surface,grandes surfaces,f
+12,4,manteau de cheminée,manteaux de cheminées,m
+12,5,charentaise,charentaises,f
+12,6,chasse-goupille,chasse-goupilles,m
+12,7,chaussure à orteils,chaussures à orteils,f
+12,8,giroflée à cinq pétales,giroflées a cinq pétales,f
+12,9,salade de phalanges,salades de phalanges,f
+12,10,rogntudju,rogntudju,m
+12,11,lixiviateuse,lixiviateuses,f
+12,12,chaise berçante,chaises berçantes,f
+12,13,chebec,chebec,m
+12,14,boulevard circulaire,boulevards circulaires,m
+12,15,bande cyclable,bandes cyclables,f
+12,16,coupe-boulons,coupe-boulons,m
+12,17,clé à pipe,clés à pipes.f
+12,18,ensacheuse,ensacheuses,f
+12,19,fulguromètre,fulguromètre,m
+12,20,diptyque,diptyques,m
+12,21,cucurbitacée,cucurbitacées,m
+12,22,glassophone,glassophones,m
+12,23,métaphore,métaphores,f
+12,24,pentécontère,pentécontères,m
+12,25,prépuce,prépuces,m
+12,26,cumulus bourgeonnant,cumulus bourgeonnants,m
+12,27,pyréolophore,pyréolophores,m
+12,28,soubassophone,soubassophones,m
+12,29,béret basque,bérets basques,m
+12,30,vocifération sportive,vociférations sportives,m
+12,31,armoire à glace,armoires à glace,f

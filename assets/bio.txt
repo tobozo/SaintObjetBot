@@ -1,0 +1,2 @@
+Bot qui poste la date et la fête du jour, façon Téléchat.
+Tous les jours à terteur.
