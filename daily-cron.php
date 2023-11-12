@@ -1,10 +1,21 @@
 <?php
 
+require_once("lib/BlueSky.php");
+require_once("lib/Mastodon.php");
 
 $env = parse_ini_file('.env') or die("Unable to parse ini file, forgot to rename '.env.example' to '.env'?\n");
 
-$BSKY_API_APP_USER  = $env["BSKY_API_APP_USER"];
-$BSKY_API_APP_TOKEN = $env["BSKY_API_APP_TOKEN"];
+if( isset( $env["BSKY_API_APP_USER"] ) && isset( $env["BSKY_API_APP_TOKEN"] ) ) {
+  $BSKY_API_APP_USER   = $env["BSKY_API_APP_USER"];
+  $BSKY_API_APP_TOKEN  = $env["BSKY_API_APP_TOKEN"];
+  $bluesky = new SocialPlatform\BlueSkyStatus( $BSKY_API_APP_USER, $BSKY_API_APP_TOKEN );
+}
+
+if( isset( $env["MASTODON_API_TOKEN"] ) && isset( $env["MASTODON_API_SERVER"] ) ) {
+  $MASTODON_API_TOKEN  = $env["MASTODON_API_TOKEN"];
+  $MASTODON_API_SERVER = $env["MASTODON_API_SERVER"];
+  $mastodon = new SocialPlatform\MastodonAPI( $MASTODON_API_TOKEN, $MASTODON_API_SERVER );
+}
 
 $csv_file = "data/saint-objet-bot-2023-11-09.csv";
 
@@ -24,14 +35,28 @@ while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
 }
 fclose($handle);
 
-if( empty($qotd ) )
+if( empty( $qotd ) )
 {
   die("Unable to generate QOTD! Malformed/incomplete CSV file?\n");
 }
 
-echo "Posting QOTD:\n$qotd\n"; // ;
+echo "QOTD:\n$qotd\n";
 
-include_once("lib/BlueSky.php");
+if( isset( $bluesky ) ) {
+  $bluesky->publish( $qotd );
+  echo "... Posted to bluesky\n";
+}
 
-$bluesky = new SocialPlatform\BlueSkyStatus( $BSKY_API_APP_USER, $BSKY_API_APP_TOKEN );
-$bluesky->publish( $qotd );
+
+if( isset( $mastodon ) ) {
+
+  $status_data = [
+    'status'     => $qotd, // populate message
+    'visibility' => 'public', // 'private'; // Public , Unlisted, Private, and Direct (default)
+    'language'   => 'fr',
+  ];
+
+  $res = $mastodon->postStatus( $status_data );
+  echo "... Posted to fediverse\n";
+  print_r($res);
+}

@@ -139,6 +139,7 @@ class BlueskyApi
     curl_setopt($c, CURLOPT_VERBOSE, 0);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 1);
+    curl_setopt($c, CURLOPT_USERAGENT, 'PHP 8/GrouchaBot of terteur 1.1');
 
     $data = curl_exec($c);
     curl_close($c);
@@ -289,7 +290,7 @@ class BlueSkyStatus
     }
 
     // post the message
-    $response = $this->api->request('POST', 'com.atproto.repo.createRecord', $args);
+    return $this->api->request('POST', 'com.atproto.repo.createRecord', $args);
   }
 
 }
