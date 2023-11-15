@@ -162,7 +162,7 @@ class BlueSkyStatus
 {
 
 
-  public $lang = "en";
+  public $lang = "fr";
   private $session = NULL;
   private $api = NULL;
 

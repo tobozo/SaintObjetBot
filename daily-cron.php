@@ -5,13 +5,13 @@ require_once("lib/Mastodon.php");
 
 $env = parse_ini_file('.env') or die("Unable to parse ini file, forgot to rename '.env.example' to '.env'?\n");
 
-if( isset( $env["BSKY_API_APP_USER"] ) && isset( $env["BSKY_API_APP_TOKEN"] ) ) {
+if( isset($argv[1]) && $argv[1]=='bluesky' && isset( $env["BSKY_API_APP_USER"] ) && isset( $env["BSKY_API_APP_TOKEN"] ) ) {
   $BSKY_API_APP_USER   = $env["BSKY_API_APP_USER"];
   $BSKY_API_APP_TOKEN  = $env["BSKY_API_APP_TOKEN"];
   $bluesky = new SocialPlatform\BlueSkyStatus( $BSKY_API_APP_USER, $BSKY_API_APP_TOKEN );
 }
 
-if( isset( $env["MASTODON_API_TOKEN"] ) && isset( $env["MASTODON_API_SERVER"] ) ) {
+if( isset($argv[1]) && $argv[1]=='mastodon' && isset( $env["MASTODON_API_TOKEN"] ) && isset( $env["MASTODON_API_SERVER"] ) ) {
   $MASTODON_API_TOKEN  = $env["MASTODON_API_TOKEN"];
   $MASTODON_API_SERVER = $env["MASTODON_API_SERVER"];
   $mastodon = new SocialPlatform\MastodonAPI( $MASTODON_API_TOKEN, $MASTODON_API_SERVER );
