@@ -53,10 +53,8 @@ if( isset( $bluesky ) )
   $res = $bluesky->publish( $qotd );
   if( isset( $res['curl_error_code'] ) )
   {
-    echo "... Failed to post to fediverse:".PHP_EOL;
     print_r($res);
-    echo PHP_EOL;
-    exit(1);
+    php_die("... Failed to post to bluesky:".PHP_EOL);
   }
   echo "... Posted to bluesky".PHP_EOL;
 }
@@ -73,12 +71,9 @@ if( isset( $mastodon ) )
   $res = $mastodon->postStatus( $status_data );
   if( isset( $res['curl_error_code'] ) || isset( $res['error'] ) )
   {
-    echo "... Failed to post to fediverse:".PHP_EOL;
     print_r($res);
-    echo PHP_EOL;
-    exit(1);
+    php_die("... Failed to post to fediverse:".PHP_EOL);
   }
   echo "... Posted to fediverse".PHP_EOL;
-  print_r($res);
 }
 
