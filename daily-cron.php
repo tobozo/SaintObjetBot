@@ -37,14 +37,20 @@ fclose($handle);
 
 if( empty( $qotd ) )
 {
-  die("Unable to generate QOTD! Malformed/incomplete CSV file?\n");
+  die("Unable to generate QOTD! Malformed/incomplete CSV file?".PHP_EOL);
 }
 
-echo "QOTD:\n$qotd\n";
+echo "QOTD:\n$qotd".PHP_EOL;
 
 if( isset( $bluesky ) ) {
-  $bluesky->publish( $qotd );
-  echo "... Posted to bluesky\n";
+  $res = $bluesky->publish( $qotd );
+  if( isset( $res['curl_error_code'] ) ) {
+    echo "... Failed to post to fediverse:".PHP_EOL;
+    print_r($res);
+    echo PHP_EOL;
+    exit(1);
+  }
+  echo "... Posted to bluesky".PHP_EOL;
 }
 
 
@@ -57,6 +63,11 @@ if( isset( $mastodon ) ) {
   ];
 
   $res = $mastodon->postStatus( $status_data );
-  echo "... Posted to fediverse\n";
-  print_r($res);
+  if( isset( $res['curl_error_code'] ) ) {
+    echo "... Failed to post to fediverse:".PHP_EOL;
+    print_r($res);
+    echo PHP_EOL;
+    exit(1);
+  }
+  echo "... Posted to fediverse".PHP_EOL;
 }

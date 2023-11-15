@@ -144,6 +144,10 @@ class BlueskyApi
     $data = curl_exec($c);
     curl_close($c);
 
+    if (!$data) {
+      return json_encode(['ok'=>false, 'curl_error_code' => curl_errno($c), 'curl_error' => curl_error($c)]);
+    }
+
     return json_decode($data, false, 512, JSON_THROW_ON_ERROR);
   }
 }
