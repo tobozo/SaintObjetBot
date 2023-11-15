@@ -1,6 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace SocialPlatform;
+
+require_once("common.php");
+
 
 
 /**
@@ -27,6 +31,10 @@ class BlueskyApi
       ];
 
       $data = $this->request('POST', 'com.atproto.server.createSession', $args);
+
+      if( isset( $data->curl_error_code ) || isset( $data->error ) ) {
+        php_die("Unable to create bluesky session".PHP_EOL);
+      }
 
       $this->accountDid = $data->did;
 
@@ -174,7 +182,7 @@ class BlueSkyStatus
   public function __construct($username, $pass)
   {
     $this->api = new BlueskyApi($username, $pass);
-    if( ! $this->api->getAccountDid() ) die("Unable to get account id\n");
+    if( ! $this->api->getAccountDid() ) php_die("Unable to get account id".PHP_EOL);
   }
 
 
@@ -188,7 +196,7 @@ class BlueSkyStatus
     ];
 
     # fetch the HTML
-    $resp = file_get_contents( $url ) or die("Unable to fetch $url\n");
+    $resp = file_get_contents( $url ) or php_die("Unable to fetch $url".PHP_EOL);
 
     libxml_use_internal_errors(true); // don't spam the console with XML warnings
     $doc = new \DOMDocument();
@@ -221,15 +229,15 @@ class BlueSkyStatus
       $img_path = "/tmp/".md5($url).'.image';
 
       if(! file_exists( $img_path ) ) {
-        $blobImage = file_get_contents( $img_url ) or die("Unable to fetch og:image at url $url\n");
-        file_put_contents($img_path, $blobImage ) or die("Unable to save og:image at url $url\n");
+        $blobImage = file_get_contents( $img_url ) or php_die("Unable to fetch og:image at url $url".PHP_EOL);
+        file_put_contents($img_path, $blobImage ) or php_die("Unable to save og:image at url $url".PHP_EOL);
       } else {
-        $blobImage = file_get_contents( $img_path ) or die("Unable to fetch og:image at path $img_path\n");
+        $blobImage = file_get_contents( $img_path ) or php_die("Unable to fetch og:image at path $img_path".PHP_EOL);
       }
       // get image mimetype
       $img_mime_type = image_type_to_mime_type(exif_imagetype($img_path));
       $response = $this->api->request('POST', 'com.atproto.repo.uploadBlob', [], $blobImage, $img_mime_type);
-      if( !isset($response->blob) ) die("No blob in response\n");
+      if( !isset($response->blob) ) php_die("No blob in response\n");
       // echo "uploadBlob response for $img_mime_type: ".print_r($response, true)."\n";
       $card["thumb"] = $response->blob;
     }

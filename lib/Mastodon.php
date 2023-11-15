@@ -1,8 +1,10 @@
 <?php
-
 declare(strict_types=1);
 
 namespace SocialPlatform;
+
+require_once("common.php");
+
 
 class MastodonAPI
 {
@@ -59,7 +61,7 @@ class MastodonAPI
       return json_encode(['ok'=>false, 'curl_error_code' => curl_errno($ch), 'curl_error' => curl_error($ch)]);
     }
     curl_close($ch);
-    return json_decode($this->reply, true, 512, JSON_THROW_ON_ERROR););
+    return json_decode($this->reply, true, 512, JSON_THROW_ON_ERROR);
   }
 }
 

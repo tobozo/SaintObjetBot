@@ -3,18 +3,24 @@
 require_once("lib/BlueSky.php");
 require_once("lib/Mastodon.php");
 
-$env = parse_ini_file('.env') or die("Unable to parse ini file, forgot to rename '.env.example' to '.env'?\n");
+$env = parse_ini_file('.env') or php_die("Unable to parse ini file, forgot to rename '.env.example' to '.env'?".PHP_EOL);
 
-if( isset($argv[1]) && $argv[1]=='bluesky' && isset( $env["BSKY_API_APP_USER"] ) && isset( $env["BSKY_API_APP_TOKEN"] ) ) {
-  $BSKY_API_APP_USER   = $env["BSKY_API_APP_USER"];
-  $BSKY_API_APP_TOKEN  = $env["BSKY_API_APP_TOKEN"];
-  $bluesky = new SocialPlatform\BlueSkyStatus( $BSKY_API_APP_USER, $BSKY_API_APP_TOKEN );
+if( !isset($argv[1]) ) {
+  php_die("Call to script is missing 1 arg (network name)".PHP_EOL );
 }
 
-if( isset($argv[1]) && $argv[1]=='mastodon' && isset( $env["MASTODON_API_TOKEN"] ) && isset( $env["MASTODON_API_SERVER"] ) ) {
-  $MASTODON_API_TOKEN  = $env["MASTODON_API_TOKEN"];
-  $MASTODON_API_SERVER = $env["MASTODON_API_SERVER"];
-  $mastodon = new SocialPlatform\MastodonAPI( $MASTODON_API_TOKEN, $MASTODON_API_SERVER );
+if( $argv[1]=='bluesky' ) {
+  if( !isset( $env["BSKY_API_APP_USER"] ) || !isset( $env["BSKY_API_APP_TOKEN"] ) ) {
+    php_die("Missing credentials for bsky, check your env file!".PHP_EOL );
+  }
+  $bluesky = new SocialPlatform\BlueSkyStatus( $env["BSKY_API_APP_USER"], $env["BSKY_API_APP_TOKEN"] );
+}
+
+if( $argv[1]=='mastodon' ) {
+  if( !isset( $env["MASTODON_API_TOKEN"] ) || !isset( $env["MASTODON_API_SERVER"] ) ) {
+    php_die("Missing credentials for mastodon, check your env file!".PHP_EOL );
+  }
+  $mastodon = new SocialPlatform\MastodonAPI( $env["MASTODON_API_TOKEN"], $env["MASTODON_API_SERVER"] );
 }
 
 $csv_file = "data/saint-objet-bot-2023-11-09.csv";
@@ -25,7 +31,7 @@ $dayNames = ['Mitanche', 'Lourdi', 'Pardi', 'Morquidi', 'Jourdi', 'Dendrevi', 'S
 $qotd = "";
 $today = getdate();
 
-$handle = fopen($csv_file, "r") or die("Unable to open CSV file\n");
+$handle = fopen($csv_file, "r") or php_die("Unable to open CSV file".PHP_EOL);
 while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
 {
   if( $data[0] == $today['mon'] && $data[1] == $today['mday'] )
@@ -37,14 +43,16 @@ fclose($handle);
 
 if( empty( $qotd ) )
 {
-  die("Unable to generate QOTD! Malformed/incomplete CSV file?".PHP_EOL);
+  php_die("Unable to generate QOTD! Malformed/incomplete CSV file?".PHP_EOL);
 }
 
 echo "QOTD:\n$qotd".PHP_EOL;
 
-if( isset( $bluesky ) ) {
+if( isset( $bluesky ) )
+{
   $res = $bluesky->publish( $qotd );
-  if( isset( $res['curl_error_code'] ) ) {
+  if( isset( $res['curl_error_code'] ) )
+  {
     echo "... Failed to post to fediverse:".PHP_EOL;
     print_r($res);
     echo PHP_EOL;
@@ -54,8 +62,8 @@ if( isset( $bluesky ) ) {
 }
 
 
-if( isset( $mastodon ) ) {
-
+if( isset( $mastodon ) )
+{
   $status_data = [
     'status'     => $qotd, // populate message
     'visibility' => 'public', // 'private'; // Public , Unlisted, Private, and Direct (default)
@@ -63,11 +71,14 @@ if( isset( $mastodon ) ) {
   ];
 
   $res = $mastodon->postStatus( $status_data );
-  if( isset( $res['curl_error_code'] ) ) {
+  if( isset( $res['curl_error_code'] ) || isset( $res['error'] ) )
+  {
     echo "... Failed to post to fediverse:".PHP_EOL;
     print_r($res);
     echo PHP_EOL;
     exit(1);
   }
   echo "... Posted to fediverse".PHP_EOL;
+  print_r($res);
 }
+
