@@ -10,13 +10,13 @@ if( empty( $qotd ) )
   php_die("Unable to generate QOTD! Malformed/incomplete CSV file?".PHP_EOL);
 }
 
-echo "QOTD:\n$qotd".PHP_EOL;
-
-$env = parse_ini_file('.env') or php_die("Unable to parse ini file, forgot to rename '.env.example' to '.env'?".PHP_EOL);
+$env = @parse_ini_file('.env') or php_die("Unable to parse ini file, forgot to rename '.env.example' to '.env'?".PHP_EOL);
 
 if( !isset($argv[1]) ) {
   php_die("Call to script is missing 1 arg (network name)".PHP_EOL );
 }
+
+echo "QOTD:\n$qotd".PHP_EOL;
 
 if( $argv[1]=='bluesky' ) {
   if( !isset( $env["BSKY_API_APP_USER"] ) || !isset( $env["BSKY_API_APP_TOKEN"] ) ) {
@@ -39,7 +39,7 @@ if( $argv[1]=='mastodon' ) {
   }
   $mastodon = new SocialPlatform\MastodonAPI( $env["MASTODON_API_TOKEN"], $env["MASTODON_API_SERVER"] );
   $status_data = [
-    'status'     => $qotd, // populate message
+    'status'     => $qotd,    // populate message
     'visibility' => 'public', // 'private'; // Public , Unlisted, Private, and Direct (default)
     'language'   => 'fr',
   ];

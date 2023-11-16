@@ -32,13 +32,13 @@ class BlueskyApi
 
       $data = $this->request('POST', 'com.atproto.server.createSession', $args);
 
-      if( isset( $data->curl_error_code ) || isset( $data->error ) ) {
+      if( isset( $data['curl_error_code'] ) || isset( $data['error'] ) ) {
         php_die("Unable to create bluesky session".PHP_EOL);
       }
 
-      $this->accountDid = $data->did;
+      $this->accountDid = $data['did'];
 
-      $this->apiKey = $data->accessJwt;
+      $this->apiKey = $data['accessJwt'];
     }
   }
 
@@ -156,7 +156,7 @@ class BlueskyApi
       return json_encode(['ok'=>false, 'curl_error_code' => curl_errno($c), 'curl_error' => curl_error($c)]);
     }
 
-    return json_decode($data, false, 512, JSON_THROW_ON_ERROR);
+    return json_decode($data, true, 512, JSON_THROW_ON_ERROR);
   }
 }
 
@@ -184,6 +184,11 @@ class BlueSkyStatus
     $this->api = new BlueskyApi($username, $pass);
     if( ! $this->api->getAccountDid() ) php_die("Unable to get account id".PHP_EOL);
   }
+
+
+  // https://bluesky.api.stdlib.com/feed@0.1.0/posts/list/timeline/
+
+
 
 
   public function getEmbedCard( $url)
@@ -237,9 +242,9 @@ class BlueSkyStatus
       // get image mimetype
       $img_mime_type = image_type_to_mime_type(exif_imagetype($img_path));
       $response = $this->api->request('POST', 'com.atproto.repo.uploadBlob', [], $blobImage, $img_mime_type);
-      if( !isset($response->blob) ) php_die("No blob in response\n");
+      if( !isset($response['blob']) ) php_die("No blob in response\n");
       // echo "uploadBlob response for $img_mime_type: ".print_r($response, true)."\n";
-      $card["thumb"] = $response->blob;
+      $card["thumb"] = $response['blob'];
     }
 
     return [
@@ -250,15 +255,98 @@ class BlueSkyStatus
 
 
 
+
+  public function get_uri_class(string $uri)
+  {
+    if (empty($uri)) {
+      return null;
+    }
+
+    $elements = explode(':', $uri);
+    if (empty($elements) || ($elements[0] != 'at')) {
+      php_die("malformed URI".PHP_EOL);
+      //$post = Post::selectFirstPost(['extid'], ['uri' => $uri]);
+      //return get_uri_class($post['extid'] ?? '');
+    }
+
+    $arr = [];
+
+    $arr['cid'] = array_pop($elements);
+    $arr['uri'] = implode(':', $elements);
+
+    if ((substr_count($arr['uri'], '/') == 2) && (substr_count($arr['cid'], '/') == 2)) {
+      $arr['uri'] .= ':' . $arr['cid'];
+      $arr['cid'] = '';
+    }
+
+    return $arr;
+  }
+
+
+  public function get_uri_parts(string $uri)
+  {
+    $arr = $this->get_uri_class($uri);
+    if (empty($arr)) {
+      return null;
+    }
+
+    $parts = explode('/', substr($arr['uri'], 5));
+
+    $arr = [];
+
+    $arr['repo']       = $parts[0];
+    $arr['collection'] = $parts[1];
+    $arr['rkey']       = $parts[2];
+
+    return $arr;
+  }
+
+
+  function delete_post(string $uri)
+  {
+    $parts = $this->get_uri_parts($uri);
+    if (empty($parts)) {
+      Logger::debug('No uri delected', ['uri' => $uri]);
+      return;
+    }
+    $this->api->request('POST', 'com.atproto.repo.deleteRecord', $parts);
+    //Logger::debug('Deleted', ['parts' => $parts]);
+  }
+
+
+  public function checkDupe( $text )
+  {
+    $last_10_posts = $this->api->request('GET', 'app.bsky.feed.getTimeline');
+
+    $deleteCount = 0;
+
+    foreach( $last_10_posts['feed'] as $pos => $item ) {
+      if( $text == $item['post']['record']['text'] ) { // uh-oh, post already there
+        if( $deleteCount > 0 ) {
+          echo sprintf("Entry %d/%s is duplicate!!\n", $pos, $item['post']['uri']);
+          $this->delete_post( $item['post']['uri'] );
+        }
+        $deleteCount++;
+      }
+    }
+    if( $deleteCount > 0 ) {
+      php_die("QOTD already posted, aborting".PHP_EOL );
+    }
+  }
+
+
+
+
   public function publish( $text )
   {
+    $this->checkDupe( $text );
     //Get the URL from the text
     preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $text, $matches);
 
     if (!empty($matches[0][0]) ) {
 
       $url  = $matches[0][0];
-      $text = trim(preg_replace('/#\w+\s*/', '', $text)); // remove hashtags, trim
+      //$text = trim(preg_replace('/#\w+\s*/', '', $text)); // remove hashtags, trim
 
       $args = [
         "repo"       => $this->api->getAccountDid(),
