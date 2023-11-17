@@ -1,7 +1,7 @@
 # SaintObjetBot
 
-<a rel="nofollow me" class="Link--primary" href="https://piaille.fr/@SaintObjetBot">@SaintObjetBo@piaille.fr</a>
-<a rel="nofollow me" class="Link--primary" href="https://bsky.app/profile/saintobjetbot.bsky.social">@saintobjetbot.bsky.social</a>
+<a rel="me" class="Link--primary" href="https://piaille.fr/@SaintObjetBot">@SaintObjetBo@piaille.fr</a>
+<a rel="me" class="Link--primary" href="https://bsky.app/profile/saintobjetbot.bsky.social">@saintobjetbot.bsky.social</a>
 
 <img src=assets/groucha.png width=256 />
 
