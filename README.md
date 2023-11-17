@@ -2,7 +2,7 @@
 
 🐦 <a href="https://piaille.fr/@SaintObjetBot" rel="me nofollow">@SaintObjetBot @piaille.fr</a>
 
-🐦 <a href="https://bsky.app/profile/saintobjetbot.bsky.social" rel="me nofollow">@saintobjetbot.bsky.social</a>
+🔵 <a href="https://bsky.app/profile/saintobjetbot.bsky.social" rel="me nofollow">@saintobjetbot.bsky.social</a>
 
 <img src=assets/groucha.png width=256 />
 
