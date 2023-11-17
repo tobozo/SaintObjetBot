@@ -1,0 +1,14 @@
+[Unit]
+Description=SaintObjetBot Bluesky
+After=network.target
+# if fails, no more than 5 retries per day
+StartLimitIntervalSec=86400
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=/path/to/SaintObjetBot
+ExecStart=php /path/to/SaintObjetBot/daily-cron.php bluesky
+NoNewPrivileges=true
+Restart=on-failure
+RestartSec=600

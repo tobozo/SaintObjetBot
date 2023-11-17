@@ -265,8 +265,6 @@ class BlueSkyStatus
     $elements = explode(':', $uri);
     if (empty($elements) || ($elements[0] != 'at')) {
       php_die("malformed URI".PHP_EOL);
-      //$post = Post::selectFirstPost(['extid'], ['uri' => $uri]);
-      //return get_uri_class($post['extid'] ?? '');
     }
 
     $arr = [];
@@ -323,7 +321,7 @@ class BlueSkyStatus
     foreach( $last_10_posts['feed'] as $pos => $item ) {
       if( $text == $item['post']['record']['text'] ) { // uh-oh, post already there
         if( $deleteCount > 0 ) {
-          echo sprintf("Entry %d/%s is duplicate!!\n", $pos, $item['post']['uri']);
+          echo sprintf("Entry %d/%s is duplicate, deleting...\n", $pos, $item['post']['uri']);
           $this->delete_post( $item['post']['uri'] );
         }
         $deleteCount++;

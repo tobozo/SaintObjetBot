@@ -1,5 +1,8 @@
 # SaintObjetBot
 
+<a rel="nofollow me" class="Link--primary" href="https://piaille.fr/@SaintObjetBot">@SaintObjetBo@piaille.fr</a>
+<a rel="nofollow me" class="Link--primary" href="https://bsky.app/profile/saintobjetbot.bsky.social">@saintobjetbot.bsky.social</a>
+
 <img src=assets/groucha.png width=256 />
 
 Le [SaintObjetBot](https://bsky.app/profile/SaintObjetBot.bsky.social) est un robot poste la date et la fête du jour, façon Téléchat.
