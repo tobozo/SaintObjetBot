@@ -102,11 +102,11 @@ month,day,singular,plural,genre
 4,10,acanthe,acanthes,f
 4,11,humus,humus,m
 4,12,entroque,entroque,f
-4,13,fogon,fogons,m
-4,14,gambain,gambains,m
-4,15,chasuble,chasubles,f
-4,16,clape,clapes,f
-4,17,mandorle,mandorles,f
+4,13,fourneau,fourneaux,m
+4,14,ampoule multiprise et rallonge,ampoules multiprises et rallonges,f
+4,15,alésoir à cliquet,Alésoirs à cliquets,m
+4,16,clapier,clapiers,m
+4,17,taloche,taloches,f
 4,18,occiput,occiputs,m
 4,19,diodon,diodons,m
 4,20,tricorne,tricornes,m
@@ -117,7 +117,7 @@ month,day,singular,plural,genre
 4,25,gymkhana,gymkhanas,m
 4,26,camas,camasses,f
 4,27,queue-de-pie,queues-de-pie,f
-4,28,sterculia,sterculias,f
+4,28,clé à pipe débouchée,Clés à pipe débouchées,f
 4,29,perruque,perruques,f
 4,30,traille,trailles,f
 5,1,quinquet,quinquets,m
