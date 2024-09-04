@@ -23,8 +23,8 @@ class BlueskyApi
   {
     $this->apiUri = $api_uri;
 
-    if (($handle) && ($app_password)) {
-
+    if (($handle) && ($app_password))
+    {
       $args = [
         'identifier' => $handle,
         'password'   => $app_password,
@@ -32,9 +32,8 @@ class BlueskyApi
 
       $data = $this->request('POST', 'com.atproto.server.createSession', $args);
 
-      if( isset( $data['curl_error_code'] ) || isset( $data['error'] ) ) {
+      if( isset( $data['curl_error_code'] ) || isset( $data['error'] ) )
         php_die("Unable to create bluesky session".PHP_EOL);
-      }
 
       $this->accountDid = $data['did'];
 
@@ -99,21 +98,21 @@ class BlueskyApi
   {
     $url = $this->apiUri . $request;
 
-    if (($type === 'GET') && (count($args))) {
+    if (($type === 'GET') && (count($args)))
       $url .= '?' . http_build_query($args);
-    } elseif (($type === 'POST') && (!$content_type)) {
+    elseif (($type === 'POST') && (!$content_type))
       $content_type = 'application/json';
-    }
 
     $headers = [];
-    if ($this->apiKey) {
+    if ($this->apiKey)
       $headers[] = 'Authorization: Bearer ' . $this->apiKey;
-    }
 
-    if ($content_type) {
+    if ($content_type)
+    {
       $headers[] = 'Content-Type: ' . $content_type;
 
-      if (($content_type === 'application/json') && (count($args))) {
+      if (($content_type === 'application/json') && (count($args)))
+      {
         $body = json_encode($args, JSON_THROW_ON_ERROR);
         $args = [];
       }
@@ -122,11 +121,11 @@ class BlueskyApi
     $c = curl_init();
     curl_setopt($c, CURLOPT_URL, $url);
 
-    if (count($headers)) {
+    if (count($headers))
       curl_setopt($c, CURLOPT_HTTPHEADER, $headers);
-    }
 
-    switch ($type) {
+    switch ($type)
+    {
       case 'POST':
         curl_setopt($c, CURLOPT_POST, 1);
         break;
@@ -137,11 +136,10 @@ class BlueskyApi
         curl_setopt($c, CURLOPT_CUSTOMREQUEST, $type);
     }
 
-    if ($body) {
+    if ($body)
       curl_setopt($c, CURLOPT_POSTFIELDS, $body);
-    } elseif (($type !== 'GET') && (count($args))) {
+    elseif (($type !== 'GET') && (count($args)))
       curl_setopt($c, CURLOPT_POSTFIELDS, json_encode($args, JSON_THROW_ON_ERROR));
-    }
 
     curl_setopt($c, CURLOPT_HEADER, 0);
     curl_setopt($c, CURLOPT_VERBOSE, 0);
@@ -152,9 +150,8 @@ class BlueskyApi
     $data = curl_exec($c);
     curl_close($c);
 
-    if (!$data) {
+    if (!$data)
       return json_encode(['ok'=>false, 'curl_error_code' => curl_errno($c), 'curl_error' => curl_error($c)]);
-    }
 
     return json_decode($data, true, 512, JSON_THROW_ON_ERROR);
   }
@@ -182,7 +179,7 @@ class BlueSkyStatus
   public function __construct($username, $pass)
   {
     $this->api = new BlueskyApi($username, $pass);
-    if( ! $this->api->getAccountDid() ) php_die("Unable to get account id".PHP_EOL);
+    if( ! $this->api->getAccountDid() ) php_die('Unable to get account id'.PHP_EOL);
   }
 
 
@@ -193,11 +190,11 @@ class BlueSkyStatus
 
   public function getEmbedCard( $url)
   {
-    # the required fields for every embed card
+    # bluesky required fields for every embed card
     $card = [
-      "uri" => $url,
-      "title" => "",
-      "description" => "",
+      'uri'         => $url,
+      'title'       => '',
+      'description' => '',
     ];
 
     # fetch the HTML
@@ -211,45 +208,54 @@ class BlueSkyStatus
     $desc_tags_arr  = $selector->query('//meta[@property="og:description"]');
     $img_url_arr    = $selector->query('//meta[@property="og:image"]');
     // loop through all found items
-    foreach($title_tags_arr as $node) {
+    foreach($title_tags_arr as $node)
+    {
       $title_tag = $node->getAttribute('content');
     }
-    foreach($desc_tags_arr as $node) {
+    foreach($desc_tags_arr as $node)
+    {
       $description_tag = $node->getAttribute('content');
     }
-    foreach($img_url_arr as $node) {
+    foreach($img_url_arr as $node)
+    {
       $img_url = $node->getAttribute('content');
     }
     # parse out the "og:title" and "og:description" HTML meta tags
-    if( $title_tag ) {
+    if( $title_tag )
       $card['title'] = $title_tag;
-    }
-    if( $description_tag ) {
-      $card['description'] = $description_tag;
-    }
-    if( $img_url ) {
-      if(!strstr($img_url, '://') ) {
-        $img_url = $url.$img_url;
-      }
-      $img_path = "/tmp/".md5($url).'.image';
 
-      if(! file_exists( $img_path ) ) {
+    if( $description_tag )
+      $card['description'] = $description_tag;
+
+    if( $img_url )
+    {
+      if(!strstr($img_url, '://') )
+        $img_url = $url.$img_url;
+
+      $img_path = '/tmp/'.md5($url).'.image';
+
+      if(! file_exists( $img_path ) )
+      {
         $blobImage = file_get_contents( $img_url ) or php_die("Unable to fetch og:image at url $url".PHP_EOL);
         file_put_contents($img_path, $blobImage ) or php_die("Unable to save og:image at url $url".PHP_EOL);
-      } else {
-        $blobImage = file_get_contents( $img_path ) or php_die("Unable to fetch og:image at path $img_path".PHP_EOL);
       }
+      else
+        $blobImage = file_get_contents( $img_path ) or php_die("Unable to fetch og:image at path $img_path".PHP_EOL);
+
       // get image mimetype
       $img_mime_type = image_type_to_mime_type(exif_imagetype($img_path));
       $response = $this->api->request('POST', 'com.atproto.repo.uploadBlob', [], $blobImage, $img_mime_type);
-      if( !isset($response['blob']) ) php_die("No blob in response\n");
+
+      if( !isset($response['blob']) )
+        php_die("No blob in response\n");
+
       // echo "uploadBlob response for $img_mime_type: ".print_r($response, true)."\n";
-      $card["thumb"] = $response['blob'];
+      $card['thumb'] = $response['blob'];
     }
 
     return [
-        '$type' => "app.bsky.embed.external",
-        'external' => $card
+      '$type' => 'app.bsky.embed.external',
+      'external' => $card
     ];
   }
 
@@ -264,7 +270,7 @@ class BlueSkyStatus
 
     $elements = explode(':', $uri);
     if (empty($elements) || ($elements[0] != 'at')) {
-      php_die("malformed URI".PHP_EOL);
+      php_die('malformed URI'.PHP_EOL);
     }
 
     $arr = [];
@@ -328,64 +334,111 @@ class BlueSkyStatus
       }
     }
     if( $deleteCount > 0 ) {
-      php_die("QOTD already posted, aborting".PHP_EOL );
+      php_die('QOTD already posted, aborting'.PHP_EOL );
     }
   }
 
 
+  private function addHashTagFacets( $text, &$args )
+  {
+    // see https://docs.bsky.app/docs/advanced-guides/post-richtext#producing-facets
+
+    if( ! preg_match_all('/(?:^|\s)(#[^\d\s]\S*)(?=\s)?/', $text, $matches) )
+      return;
+
+    if( !isset($matches[0]) || count($matches[0])==0 )
+      return;
+
+    foreach($matches[0] as $match)
+    {
+      $hashtag = $match;
+
+      $hasLeadingSpace = preg_match('/^\s/', $hashtag, $whatever);
+
+      $hashtag = trim($hashtag);
+
+      $hashtag = preg_replace('/\p{P}+$/', '', $hashtag ); // strip ending punctuation
+
+      if( strlen($hashtag) > 66 )
+        continue;
+
+      if(!isset($args['record']['facets']))
+        $args['record']['facets'] = [];
+
+      $index = strpos($text, $match)+($hasLeadingSpace?1:0);
+
+      $args['record']['facets'][] = [
+        'index' => [
+          'byteStart' => $index,
+          'byteEnd'   => $index+strlen($hashtag) // inclusive of last char
+        ],
+        'features' => [[
+          '$type' => 'app.bsky.richtext.facet#tag',
+          'tag': str_replace('#', '', $hashtag)
+        ]]
+      ];
+
+    }
+  }
+
+  private function addLinkFacets( $text, &$args )
+  {
+    // see https://docs.bsky.app/docs/advanced-guides/post-richtext#producing-facets
+
+    if( ! preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $text, $matches) )
+      return;
+
+    if( !isset($matches[0]) || count($matches[0])==0 || empty($matches[0][0] )
+      return;
+
+    $url  = $matches[0][0];
+
+    if( ! isset($args['record']['facets']) )
+      $args['record']['facets'] = [];
+
+    $args['record']['facets'][] = [
+      'index'      => [
+        'byteStart'  =>  strpos($text,'https:'),
+        'byteEnd'    =>  (strpos($text,'https:')+strlen($url))
+      ],
+      'features'   =>  [[
+        'uri'        =>  $url,
+        '$type'      =>  'app.bsky.richtext.facet#link'
+      ]]
+    ];
+
+    // generate the oembed card
+    $embed = $this->getEmbedCard($url);
+
+    if( $embed ) {
+      $args['record']['embed'] = $embed;
+    }
+  }
+
+
+  private function addFacets( $text, &$args )
+  {
+    $this->addLinkFacets( $text, $args );
+    $this->addHashTagFacets( $text, $args );
+  }
 
 
   public function publish( $text )
   {
     $this->checkDupe( $text );
-    //Get the URL from the text
-    preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $text, $matches);
 
-    if (!empty($matches[0][0]) ) {
-
-      $url  = $matches[0][0];
-      //$text = trim(preg_replace('/#\w+\s*/', '', $text)); // remove hashtags, trim
-
-      $args = [
-        "repo"       => $this->api->getAccountDid(),
-        "collection" => "app.bsky.feed.post",
-        "record"     => [
-          '$type'      => "app.bsky.feed.post",
-          "langs"      => [$this->lang],
-          "createdAt"  => date("c"),
-          "text"       => $text,
-          "facets"     => [[
-            "index"      => [
-              "byteStart"  =>  strpos($text,'https:'),
-              "byteEnd"    =>  (strpos($text,'https:')+strlen($url))
-            ],
-            "features"   =>  [[
-              "uri"        =>  $url,
-              '$type'      =>  "app.bsky.richtext.facet#link"
-            ]]
-          ]]
+    $args = [
+      'repo'       => $this->api->getAccountDid(),
+        'collection' => 'app.bsky.feed.post',
+        'record'     => [
+          '$type'      => 'app.bsky.feed.post',
+          'langs'      => [$this->lang],
+          'createdAt'  => date("c"),
+          'text'       => $text
         ]
-      ];
+    ];
 
-      $embed = $this->getEmbedCard($url);
-
-      if( $embed ) {
-        $args['record']['embed'] = $embed;
-      }
-
-    } else {
-      // We won't try to do anything clever with this
-
-      $args = [
-        "repo"       => $this->api->getAccountDid(),
-        "collection" => "app.bsky.feed.post",
-        "record"     => [
-          '$type'      => "app.bsky.feed.post",
-          "createdAt"  => date("c"), "text" => $text
-        ]
-      ];
-
-    }
+    $this->addFacets( $text, $args );
 
     // post the message
     return $this->api->request('POST', 'com.atproto.repo.createRecord', $args);
