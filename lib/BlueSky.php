@@ -1,101 +1,321 @@
 <?php
-declare(strict_types=1);
 
 namespace SocialPlatform;
 
-require_once("common.php");
+use \SocialPlatform\GithubInfoFetcher;
+use \QueueManager\JSONQueue;
 
-
+// Source/inspiration
+// - https://atproto.com/blog/create-post
+// - https://packagist.org/packages/cjrasmussen/bluesky-api
+// - https://github.com/cjrasmussen/BlueskyApi
+// - https://james.cridland.net/blog/2023/php-posting-to-bluesky/
+// - https://github.com/friendica/friendica-addons/tree/develop/bluesky
 
 /**
-* Class for interacting with the Bluesky API/AT protocol
-* Inspired by https://github.com/cjrasmussen/BlueskyApi
-* Changes by @tobozo: removed the id lookup in the constructor
-*
-*/
+ * Class for interacting with the Bluesky API/AT protocol
+ * - https://github.com/cjrasmussen/BlueskyApi
+ * Changes by @tobozo:
+ * - removed the id lookup in the constructor
+ * - added session cache
+ * - added rate limit pseudo support
+ * - added session create/refresh/revoke
+ *
+ */
 class BlueskyApi
 {
   private ?string $accountDid = null;
   private ?string $apiKey = null;
+  private ?array $session = null;
   private string $apiUri;
 
-  public function __construct(?string $handle = null, ?string $app_password = null, string $api_uri = 'https://bsky.social/xrpc/')
+  private $lastRequestTime = 0;
+  private $minDelayBetweenQueries = 1; // seconds
+
+  private $response_headers = [];
+  private $cache_dir = 'cache/bluesky';
+  private $session_file;// = INDEX_CACHE_DIR.'/session.json';
+  private $ratelimit_file;// = INDEX_CACHE_DIR.'/ratelimit.json';
+
+
+  public function __construct(?string $handle = null, ?string $app_password = null, string $cache_dir = 'cache/bluesky', string $api_uri = 'https://bsky.social/xrpc/')
   {
+    if( empty($handle) || empty($app_password) || empty($api_uri) )
+      php_die("Missing credentials".PHP_EOL);
+
+    $this->cache_dir      = $cache_dir;
+    $this->session_file   = $session_file = $this->cache_dir.'/session.json';
+    $this->ratelimit_file = $ratelimit_file = $this->cache_dir.'/ratelimit.json';
+
+
+    $reset = $this->isRateLimited();
+
+    if( $reset>0 )
+    {
+      echo("[WARNING] Bluesky rate limit in effect, will reset in $reset seconds".PHP_EOL);
+      return;
+    }
+
     $this->apiUri = $api_uri;
 
-    if (($handle) && ($app_password))
+    if( !file_exists($this->session_file) )
     {
-      $args = [
-        'identifier' => $handle,
-        'password'   => $app_password,
-      ];
-
-      $data = $this->request('POST', 'com.atproto.server.createSession', $args);
-
-      if( isset( $data['curl_error_code'] ) || isset( $data['error'] ) )
-        php_die("Unable to create bluesky session".PHP_EOL);
-
-      $this->accountDid = $data['did'];
-
-      $this->apiKey = $data['accessJwt'];
+      if( !$this->authorizeAccess($handle, $app_password) )
+      {
+        return;
+      }
     }
+    else
+    {
+      if( !$this->refreshAccessToken() )
+      {
+        $this->revokeAccess();
+      }
+    }
+
   }
 
+
   /**
-  * Get the current account DID
-  *
-  * @return string
-  */
+   * Check if the api is rate limited
+   *
+   * @return bool|int (false or the number of seconds left before reset)
+   */
+  public function isRateLimited()
+  {
+    if( file_exists($this->ratelimit_file) )
+    {
+      $ratelimit = json_decode(file_get_contents($this->ratelimit_file), true);
+      $remaining = 0;
+
+      if( array_key_exists('ratelimit-remaining', $ratelimit ) )
+      {
+        $remaining = intval($ratelimit['ratelimit-remaining']);
+      }
+
+      if( array_key_exists('ratelimit-reset', $ratelimit ) )
+      {
+        $reset = intval($ratelimit['ratelimit-reset'])-time();
+        if( $remaining == 0 )
+          return $reset;
+      }
+    }
+    return false;
+  }
+
+
+  /**
+   * Check if $session contains necessary entries
+   *
+   * @param array $session
+   * @return bool
+   */
+  public function isValidSession($session): bool
+  {
+    if( empty($session) || !is_array($session) )
+      return false;
+    foreach(['did', 'accessJwt', 'refreshJwt'] as $key)
+    {
+      if(!array_key_exists($key, $session))
+      {
+        print_r($session);
+        echo("Invalid bluesky session data (missing key '$key')".PHP_EOL);
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  /**
+   * Check if $curl_response does not contain any error
+   *
+   * @param array $curl_response
+   * @return bool
+   */
+  public function isValidResponse($curl_response): bool
+  {
+    foreach(['error', 'curl_error_code', 'curl_error'] as $key)
+    {
+      if(array_key_exists($key, $curl_response))
+      {
+        echo("[$key] $curl_response[$key]".PHP_EOL);
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  /**
+   * Create session
+   *
+   * @param string $identifier
+   * @param string $password
+   * @return bool
+   */
+  public function authorizeAccess( $identifier, $password ): bool
+  {
+    $args = [
+      'identifier' => $identifier,
+      'password'   => $password,
+    ];
+
+    $session = $this->request('POST', 'com.atproto.server.createSession', $args);
+
+    if(!$this->isValidResponse($session) || !$this->isValidSession($session) )
+      return false;
+
+    // save session
+    file_put_contents($this->session_file, json_encode($session, JSON_PRETTY_PRINT)) or php_die("Unable to save bluesky session".PHP_EOL);
+
+    $this->session    = $session;
+    $this->accountDid = $session['did'];
+    $this->apiKey     = $session['accessJwt'];
+
+    return true;
+  }
+
+
+  /**
+   * Refresh current session access
+   *
+   * @return bool
+   */
+  public function refreshAccessToken(): bool
+  {
+    $session = json_decode(file_get_contents($this->session_file), true);
+
+    if(!is_array($session))
+    {
+      echo("Unable to read session file".PHP_EOL);
+      return false;
+    }
+
+    if( !$this->isValidSession($session) )
+      return false;
+
+    $this->apiKey = $session['refreshJwt'];
+
+    $session = $this->request('POST', 'com.atproto.server.refreshSession', []);
+
+    if(!$this->isValidResponse($session) || !$this->isValidSession($session) )
+      return false;
+
+    file_put_contents($this->session_file, json_encode($session, JSON_PRETTY_PRINT)) or php_die("Unable to save refreshed session".PHP_EOL);
+
+    $this->apiKey     = $session['accessJwt'];
+    $this->accountDid = $session['did'];
+    $this->session    = $session;
+
+    return true;
+  }
+
+
+  /**
+   * Revoke current session access
+   *
+   * @return void
+   */
+  public function revokeAccess(): void
+  {
+    if( file_exists($this->session_file))
+    {
+      echo "Revoked access".PHP_EOL;
+      unlink($this->session_file);
+    }
+    $this->session = null;
+  }
+
+
+  /**
+   * Get the current session
+   *
+   * @return array or null
+   */
+  public function getSession(): ?array
+  {
+    return $this->session;
+  }
+
+
+  /**
+   * Get the current account DID
+   *
+   * @return string
+   */
   public function getAccountDid(): ?string
   {
     return $this->accountDid;
   }
 
+
   /**
-  * Set the account DID for future requests
-  *
-  * @param string|null $account_did
-  * @return void
-  */
+   * Set the account DID for future requests
+   *
+   * @param string|null $account_did
+   * @return void
+   */
   public function setAccountDid(?string $account_did): void
   {
     $this->accountDid = $account_did;
   }
 
+
   /**
-  * Set the API key for future requests
-  *
-  * @param string|null $api_key
-  * @return void
-  */
+   * Set the API key for future requests
+   *
+   * @param string|null $api_key
+   * @return void
+   */
   public function setApiKey(?string $api_key): void
   {
     $this->apiKey = $api_key;
   }
 
+
   /**
-  * Return whether an API key has been set
-  *
-  * @return bool
-  */
+   * Return whether an API key has been set
+   *
+   * @return bool
+   */
   public function hasApiKey(): bool
   {
     return $this->apiKey !== null;
   }
 
+
   /**
-  * Make a request to the Bluesky API
-  *
-  * @param string $type
-  * @param string $request
-  * @param array $args
-  * @param string|null $body
-  * @param string|null $content_type
-  * @return mixed|object
-  * @throws \JsonException
-  */
+   * Retrieve response headers from the last query
+   *
+   * @return array
+   */
+  public function getResponseHeaders(): array
+  {
+    return $this->response_headers;
+  }
+
+
+  /**
+   * Make a request to the Bluesky API
+   *
+   * @param string $type
+   * @param string $request
+   * @param array $args
+   * @param string|null $body
+   * @param string|null $content_type
+   * @return mixed|object
+   * @throws \JsonException
+   */
   public function request(string $type, string $request, array $args = [], ?string $body = null, string $content_type = null)
   {
+    $secondsSinceLastQuery = time()-$this->lastRequestTime;
+    if( $secondsSinceLastQuery < $this->minDelayBetweenQueries )
+    {
+      // querying too fast, throttle
+      sleep( $this->minDelayBetweenQueries );
+    }
+
     $url = $this->apiUri . $request;
 
     if (($type === 'GET') && (count($args)))
@@ -145,140 +365,136 @@ class BlueskyApi
     curl_setopt($c, CURLOPT_VERBOSE, 0);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 1);
-    curl_setopt($c, CURLOPT_USERAGENT, 'PHP 8/GrouchaBot of terteur 1.1');
+    curl_setopt($c, CURLOPT_USERAGENT, 'PHP 8/ArduinoLibs bot 1.2');
+    curl_setopt($c, CURLOPT_HEADERFUNCTION, function($c, string $header) use (&$response_headers) {
+      $len = strlen($header);
+      $header = explode(':', $header, 2);
+      if (count($header) < 2) // ignore invalid headers
+        return $len;
+      $response_headers[strtolower(trim($header[0]))] = trim($header[1]);
+      return $len;
+    });
 
     $data = curl_exec($c);
+
+    $this->lastRequestTime = time();
+
+    $this->response_headers = $response_headers;
+
+    $http_code = curl_getinfo($c, CURLINFO_HTTP_CODE);
+
+    $ratelimit = [];
+
+    foreach(['limit', 'remaining', 'reset', 'policy'] as $key)
+    {
+      //     "ratelimit-limit"=>["30"],
+      //     "ratelimit-remaining"=>["0"],
+      //     "ratelimit-reset"=>["1694912614"],
+      //     "ratelimit-policy"=>["30;w=300"],
+      if( array_key_exists('ratelimit-'.$key, $response_headers ) )
+      {
+        $ratelimit['ratelimit-'.$key] = $response_headers['ratelimit-'.$key];
+      }
+    }
+
+
+    if( !empty($ratelimit) )
+    {
+      file_put_contents( $this->ratelimit_file, json_encode($ratelimit, JSON_PRETTY_PRINT) );
+    }
+
+
+    if ($http_code != 200)
+    {
+      $ret = ['ok'=>false, 'curl_error_code' => curl_errno($c), 'curl_error' => curl_error($c), 'response_headers' => $response_headers];
+      if( array_key_exists('ratelimit-reset', $ratelimit ) )
+      {
+        $ret['error'] = sprintf("Bluesky rate limit encountered, will reset in %d seconds", intval($response_headers['ratelimit-reset'])-strtotime($response_headers['date']) );
+      }
+    }
+    else
+      $ret = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+
     curl_close($c);
 
-    if (!$data)
-      return json_encode(['ok'=>false, 'curl_error_code' => curl_errno($c), 'curl_error' => curl_error($c)]);
-
-    return json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+    return $ret;
   }
 }
 
 
 
-/*
- *
- * Class for posting text or rich text status,
- * also generates thumb card view if available.
- * Author: @tobozo
- *
- **/
-
 class BlueSkyStatus
 {
 
 
-  public $lang = "fr";
+  public $lang = "en";
   private $session = NULL;
   private $api = NULL;
+  private $img_cache_dir;// = INDEX_CACHE_DIR.'/img';
+
+  public $formatted_item;
+  public JSONQueue $queue;
 
 
-  public function __construct($username, $pass)
+  public function __construct($username, $pass, $cache_dir='cache/bluesky')
   {
+    $this->img_cache_dir = $cache_dir.'/img';
     $this->api = new BlueskyApi($username, $pass);
-    if( ! $this->api->getAccountDid() ) php_die('Unable to get account id'.PHP_EOL);
+
+    if( ! $this->hasSession() )
+    {
+      // echo("No Bluesky session".PHP_EOL);
+      return;
+    }
+    if(! is_dir( $this->img_cache_dir ) ) mkdir( $this->img_cache_dir ) or php_die("Please create directory ".$this->img_cache_dir." manually".PHP_EOL);
+    $this->queue = new JSONQueue( $cache_dir, "queue.bluesky.json" );
   }
 
 
-  // https://bluesky.api.stdlib.com/feed@0.1.0/posts/list/timeline/
-
-
-
-
-  public function getEmbedCard( $url)
+  public function hasSession()
   {
-    # bluesky required fields for every embed card
-    $card = [
-      'uri'         => $url,
-      'title'       => '',
-      'description' => '',
-    ];
-
-    # fetch the HTML
-    $resp = file_get_contents( $url ) or php_die("Unable to fetch $url".PHP_EOL);
-
-    libxml_use_internal_errors(true); // don't spam the console with XML warnings
-    $doc = new \DOMDocument();
-    $doc->loadHTML($resp);
-    $selector = new \DOMXPath($doc);
-    $title_tags_arr = $selector->query('//meta[@property="og:title"]');
-    $desc_tags_arr  = $selector->query('//meta[@property="og:description"]');
-    $img_url_arr    = $selector->query('//meta[@property="og:image"]');
-    // loop through all found items
-    foreach($title_tags_arr as $node)
-    {
-      $title_tag = $node->getAttribute('content');
-    }
-    foreach($desc_tags_arr as $node)
-    {
-      $description_tag = $node->getAttribute('content');
-    }
-    foreach($img_url_arr as $node)
-    {
-      $img_url = $node->getAttribute('content');
-    }
-    # parse out the "og:title" and "og:description" HTML meta tags
-    if( $title_tag )
-      $card['title'] = $title_tag;
-
-    if( $description_tag )
-      $card['description'] = $description_tag;
-
-    if( $img_url )
-    {
-      if(!strstr($img_url, '://') )
-        $img_url = $url.$img_url;
-
-      $img_path = '/tmp/'.md5($url).'.image';
-
-      if(! file_exists( $img_path ) )
-      {
-        $blobImage = file_get_contents( $img_url ) or php_die("Unable to fetch og:image at url $url".PHP_EOL);
-        file_put_contents($img_path, $blobImage ) or php_die("Unable to save og:image at url $url".PHP_EOL);
-      }
-      else
-        $blobImage = file_get_contents( $img_path ) or php_die("Unable to fetch og:image at path $img_path".PHP_EOL);
-
-      // get image mimetype
-      $img_mime_type = image_type_to_mime_type(exif_imagetype($img_path));
-      $response = $this->api->request('POST', 'com.atproto.repo.uploadBlob', [], $blobImage, $img_mime_type);
-
-      if( !isset($response['blob']) )
-        php_die("No blob in response\n");
-
-      // echo "uploadBlob response for $img_mime_type: ".print_r($response, true)."\n";
-      $card['thumb'] = $response['blob'];
-    }
-
-    return [
-      '$type' => 'app.bsky.embed.external',
-      'external' => $card
-    ];
+    $session = $this->api->getSession();
+    if( $session == null )
+      return false;
+    if( !$this->api->isValidSession($session) )
+      return false;
+    return true;
   }
 
 
-
-
-  public function get_uri_class(string $uri)
+  public function format( array $item ): string
   {
-    if (empty($uri)) {
+    // populate message
+    $this->formatted_item = sprintf( "%s (%s) for %s by %s\n\n➡️ %s\n\n%s\n\n%s ",
+                                     $item['name'],
+                                     $item['version'],
+                                     $item['architectures'],
+                                     $item['author'],
+                                     $item['repository'],
+                                     $item['sentence'],
+                                     "Topics: ".implode(" ", array_unique($item['topics']))
+    );
+    return $this->formatted_item;
+  }
+
+
+  private function get_uri_class(string $uri)
+  {
+    if (empty($uri))
       return null;
-    }
 
     $elements = explode(':', $uri);
-    if (empty($elements) || ($elements[0] != 'at')) {
-      php_die('malformed URI'.PHP_EOL);
-    }
+
+    if (empty($elements) || ($elements[0] != 'at'))
+      php_die("malformed URI: $uri".PHP_EOL);
 
     $arr = [];
 
     $arr['cid'] = array_pop($elements);
     $arr['uri'] = implode(':', $elements);
 
-    if ((substr_count($arr['uri'], '/') == 2) && (substr_count($arr['cid'], '/') == 2)) {
+    if ((substr_count($arr['uri'], '/') == 2) && (substr_count($arr['cid'], '/') == 2))
+    {
       $arr['uri'] .= ':' . $arr['cid'];
       $arr['cid'] = '';
     }
@@ -287,12 +503,11 @@ class BlueSkyStatus
   }
 
 
-  public function get_uri_parts(string $uri)
+  private function get_uri_parts(string $uri)
   {
     $arr = $this->get_uri_class($uri);
-    if (empty($arr)) {
+    if (empty($arr))
       return null;
-    }
 
     $parts = explode('/', substr($arr['uri'], 5));
 
@@ -306,10 +521,11 @@ class BlueSkyStatus
   }
 
 
-  function delete_post(string $uri)
+  private function delete_post(string $uri)
   {
     $parts = $this->get_uri_parts($uri);
-    if (empty($parts)) {
+    if (empty($parts))
+    {
       Logger::debug('No uri delected', ['uri' => $uri]);
       return;
     }
@@ -320,22 +536,97 @@ class BlueSkyStatus
 
   public function checkDupe( $text )
   {
+    if(! $this->hasSession() )
+      return;
+
     $last_10_posts = $this->api->request('GET', 'app.bsky.feed.getTimeline');
 
     $deleteCount = 0;
 
-    foreach( $last_10_posts['feed'] as $pos => $item ) {
-      if( $text == $item['post']['record']['text'] ) { // uh-oh, post already there
-        if( $deleteCount > 0 ) {
+    foreach( $last_10_posts['feed'] as $pos => $item )
+    {
+      if( $text == $item['post']['record']['text'] )
+      { // uh-oh, post already there
+        if( $deleteCount > 0 )
+        {
           echo sprintf("Entry %d/%s is duplicate, deleting...\n", $pos, $item['post']['uri']);
           $this->delete_post( $item['post']['uri'] );
         }
         $deleteCount++;
       }
     }
-    if( $deleteCount > 0 ) {
-      php_die('QOTD already posted, aborting'.PHP_EOL );
+    if( $deleteCount > 0 )
+      php_die("QOTD already posted, aborting".PHP_EOL );
+  }
+
+
+
+
+  public function getEmbedCard( $url)
+  {
+    $info_card = GithubInfoFetcher::getCardInfo( $url );
+
+    $card = [
+      'uri'         => $url,
+      'title'       => $info_card['og_title'],
+      'description' => $info_card['og_description']
+    ];
+    $img_url = $info_card['og_image'];
+
+    if( $img_url )
+    {
+      if(!strstr($img_url, '://') )
+        $img_url = $url.$img_url;
+
+      $img_path = $this->img_cache_dir."/".md5($url).'.image';
+
+      if(! file_exists( $img_path ) )
+      {
+        // dirty fix: github gives 429 (toot many requests) if the download is made too early after fetching the og: tags
+        $blobImage = file_get_contents_exp_backoff( $img_url ) or php_die("Unable to fetch og:image at url $url".PHP_EOL);
+        // TODO: use a more stubborn method for fetching the og:image
+        file_put_contents($img_path, $blobImage ) or php_die("Unable to save og:image at url $url".PHP_EOL);
+      }
+      else
+        $blobImage = file_get_contents( $img_path ) or php_die("Unable to fetch og:image at path $img_path".PHP_EOL);
+      // get image mimetype
+      $img_mime_type = image_type_to_mime_type(exif_imagetype($img_path));
+      $response = $this->api->request('POST', 'com.atproto.repo.uploadBlob', [], $blobImage, $img_mime_type);
+      if( !array_key_exists('blob', $response) ) php_die("No blob in response".PHP_EOL);
+      // echo "uploadBlob response for $img_mime_type: ".print_r($response, true)."\n";
+      $card['thumb'] = $response['blob'];
     }
+
+    return [
+      '$type' => "app.bsky.embed.external",
+      'external' => $card
+    ];
+  }
+
+
+
+  public function publish( $text )
+  {
+    if(! $this->hasSession() )
+      return ['error' => 'no session'];
+
+    $this->checkDupe( $text );
+
+    $args = [
+      'repo'       => $this->api->getAccountDid(),
+      'collection' => 'app.bsky.feed.post',
+      'record'     => [
+        '$type'      => 'app.bsky.feed.post',
+        'langs'      => [$this->lang],
+        'createdAt'  => date("c"),
+        'text'       => $text
+      ]
+    ];
+
+    $this->addFacets( $text, $args );
+
+    // post the message
+    return $this->api->request('POST', 'com.atproto.repo.createRecord', $args);
   }
 
 
@@ -374,7 +665,7 @@ class BlueSkyStatus
         ],
         'features' => [[
           '$type' => 'app.bsky.richtext.facet#tag',
-          'tag': str_replace('#', '', $hashtag)
+          'tag' => str_replace('#', '', $hashtag)
         ]]
       ];
 
@@ -388,7 +679,7 @@ class BlueSkyStatus
     if( ! preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $text, $matches) )
       return;
 
-    if( !isset($matches[0]) || count($matches[0])==0 || empty($matches[0][0] )
+    if( !isset($matches[0]) || count($matches[0])==0 || empty($matches[0][0] ) )
       return;
 
     $url  = $matches[0][0];
@@ -410,9 +701,9 @@ class BlueSkyStatus
     // generate the oembed card
     $embed = $this->getEmbedCard($url);
 
-    if( $embed ) {
+    if( $embed )
       $args['record']['embed'] = $embed;
-    }
+
   }
 
 
@@ -423,27 +714,6 @@ class BlueSkyStatus
   }
 
 
-  public function publish( $text )
-  {
-    $this->checkDupe( $text );
-
-    $args = [
-      'repo'       => $this->api->getAccountDid(),
-        'collection' => 'app.bsky.feed.post',
-        'record'     => [
-          '$type'      => 'app.bsky.feed.post',
-          'langs'      => [$this->lang],
-          'createdAt'  => date("c"),
-          'text'       => $text
-        ]
-    ];
-
-    $this->addFacets( $text, $args );
-
-    // post the message
-    return $this->api->request('POST', 'com.atproto.repo.createRecord', $args);
-  }
 
 }
-
 
