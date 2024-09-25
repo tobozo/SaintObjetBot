@@ -15,12 +15,20 @@ class MastodonAPI
   public $response_headers = [];
   public $reply;
 
+  private $lastRequestTime = 0;
+  // NOTE: With MastodonAPI, all endpoints and methods can be called 300 times within 5 minutes (=1qps).
+  private $minDelayBetweenQueries = 1; // seconds
+
+  private $ratelimit_file;
+  private $cache_dir = 'cache/mastodon';
+
   public function __construct($token, $instance_url)
   {
     $this->token = $token;
     $this->instance_url = $instance_url;
     $urlParts = parse_url($this->instance_url);
     $this->instance_host = $urlParts['host'];
+    $this->ratelimit_file = $ratelimit_file = $this->cache_dir.'/ratelimit.json';
   }
 
 
@@ -47,6 +55,15 @@ class MastodonAPI
 
   public function callAPI($endpoint, $method, $data)
   {
+    $secondsSinceLastQuery = time()-$this->lastRequestTime;
+    if( $secondsSinceLastQuery < $this->minDelayBetweenQueries )
+    {
+      // querying too fast, throttle
+      // echo "Throttling ".$this->minDelayBetweenQueries." seconds".PHP_EOL;
+      sleep( $this->minDelayBetweenQueries );
+    }
+
+
     $headers = [
       'Authorization: Bearer '.$this->token,
       'Content-Type: multipart/form-data',
@@ -61,7 +78,8 @@ class MastodonAPI
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'PHP 7/GrouchaBot of terteur 1.2');
+    curl_setopt($ch, CURLOPT_USERAGENT, 'PHP 8/GrouchaBot of terteur 1.2');
+    curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1); // fallback from http2 to http1 broken in php 8.3.11
     curl_setopt($ch, CURLOPT_HEADERFUNCTION, function(\CurlHandle $ch, string $header) use (&$response_headers) {
       $len = strlen($header);
       $header = explode(':', $header, 2);
@@ -70,9 +88,33 @@ class MastodonAPI
       $response_headers[strtolower(trim($header[0]))] = trim($header[1]);
       return $len;
     });
+
     $this->reply = curl_exec($ch);
+
+    $this->lastRequestTime = time();
+
     $response_headers['status'] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $this->response_headers = $response_headers;
+
+    $ratelimit = [];
+
+    foreach(['limit', 'remaining', 'reset', 'policy'] as $key)
+    {
+      //     "ratelimit-limit"=>["30"],
+      //     "ratelimit-remaining"=>["0"],
+      //     "ratelimit-reset"=>["1694912614"],
+      //     "ratelimit-policy"=>["30;w=300"],
+      if( array_key_exists('ratelimit-'.$key, $response_headers ) )
+      {
+        $ratelimit['ratelimit-'.$key] = $response_headers['ratelimit-'.$key];
+      }
+    }
+
+    if( !empty($ratelimit) )
+    {
+      file_put_contents( $this->ratelimit_file, json_encode($ratelimit, JSON_PRETTY_PRINT) );
+    }
+
 
     if (!$this->reply)
     {
@@ -110,6 +152,7 @@ class MastodonAPI
     // catch curl error or API error
     if( isset( $resp['curl_error'] ) || isset( $resp['error'] ) ) {
       $err = $resp['curl_error']??$resp['error'];
+      print_r($resp);
       php_die( "[ERROR] API Error: ".$err.PHP_EOL );
     }
 
@@ -118,10 +161,9 @@ class MastodonAPI
     }
 
     if( !isset( $resp['id'] ) ) {
+      print_r($resp);
       php_die( "[ERROR] Bad API response".PHP_EOL);
     }
-
-    //print_r($resp);
 
     return $resp;
   }
@@ -154,6 +196,41 @@ class MastodonAPI
     $next_url = $links['next']['link'];
     $next_url = str_replace($this->instance_url, "", $next_url ); // strip domain from url
     return $next_url;
+  }
+
+
+  // follow link[rel=next] from paginated query, return results
+  public function consumeQuery( $linkRelNext, $what=NULL, $method="GET", $args=[], $sleep=5 ) : array
+  {
+    $ret = [];
+
+    while( $linkRelNext != "" )
+    {
+      $resp = $this->callAPI( $linkRelNext, $method, $args);
+
+      if( isset( $resp['curl_error'] ) || isset( $resp['error'] ) || isset($resp['json_error']) )
+      {
+        print_r($resp);
+        php_die("An API request to $linkRelNext failed after collecting ".count($ret)." record(s)".PHP_EOL);
+      }
+
+      if( empty($resp) )
+        break;
+
+      foreach($resp as $item)
+      {
+        if($what && isset($item[$what]))
+          $ret[] = $item[$what];
+        else
+          $ret[] = $item;
+      }
+
+      $linkRelNext = $this->getNextPage();
+      echo ".";
+      //sleep($sleep);
+    }
+
+    return $ret;
   }
 
 

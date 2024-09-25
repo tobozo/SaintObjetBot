@@ -2,8 +2,10 @@
 
 namespace SocialPlatform;
 
+require_once("common.php");
+
 use \SocialPlatform\GithubInfoFetcher;
-use \QueueManager\JSONQueue;
+//use \QueueManager\JSONQueue;
 
 // Source/inspiration
 // - https://atproto.com/blog/create-post
@@ -297,7 +299,7 @@ class BlueskyApi
 
 
   /**
-   * Make a request to the Bluesky API
+   * Make a request to the Bluesky API using curl
    *
    * @param string $type
    * @param string $request
@@ -313,6 +315,7 @@ class BlueskyApi
     if( $secondsSinceLastQuery < $this->minDelayBetweenQueries )
     {
       // querying too fast, throttle
+      // echo "Sleeping ".$this->minDelayBetweenQueries." seconds".PHP_EOL;
       sleep( $this->minDelayBetweenQueries );
     }
 
@@ -333,7 +336,7 @@ class BlueskyApi
 
       if (($content_type === 'application/json') && (count($args)))
       {
-        $body = json_encode($args, JSON_THROW_ON_ERROR);
+        $body = json_encode($args, JSON_PRETTY_PRINT);
         $args = [];
       }
     }
@@ -359,8 +362,9 @@ class BlueskyApi
     if ($body)
       curl_setopt($c, CURLOPT_POSTFIELDS, $body);
     elseif (($type !== 'GET') && (count($args)))
-      curl_setopt($c, CURLOPT_POSTFIELDS, json_encode($args, JSON_THROW_ON_ERROR));
+      curl_setopt($c, CURLOPT_POSTFIELDS, json_encode($args, JSON_PRETTY_PRINT));
 
+    curl_setopt($c, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1); // fallback from http2 to http1 broken in php 8.3.11
     curl_setopt($c, CURLOPT_HEADER, 0);
     curl_setopt($c, CURLOPT_VERBOSE, 0);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
@@ -406,14 +410,23 @@ class BlueskyApi
 
     if ($http_code != 200)
     {
-      $ret = ['ok'=>false, 'curl_error_code' => curl_errno($c), 'curl_error' => curl_error($c), 'response_headers' => $response_headers];
+      $ret = ['ok'=>false, 'curl_error_code' => curl_errno($c), 'curl_error' => curl_error($c), 'response_headers' => $response_headers, 'data'=>$data];
       if( array_key_exists('ratelimit-reset', $ratelimit ) )
       {
         $ret['error'] = sprintf("Bluesky rate limit encountered, will reset in %d seconds", intval($response_headers['ratelimit-reset'])-strtotime($response_headers['date']) );
       }
     }
     else
-      $ret = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+    {
+      try
+      {
+        $ret = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+      } catch( \Exception $e ) {
+        if( $response_headers['content-type'] == "application/vnd.ipld.car" )
+          $ret = $data;
+        else php_die("Invalid JSON in response");
+      }
+    }
 
     curl_close($c);
 
@@ -433,7 +446,7 @@ class BlueSkyStatus
   private $img_cache_dir;// = INDEX_CACHE_DIR.'/img';
 
   public $formatted_item;
-  public JSONQueue $queue;
+  //public JSONQueue $queue;
 
 
   public function __construct($username, $pass, $cache_dir='cache/bluesky')
@@ -447,7 +460,7 @@ class BlueSkyStatus
       return;
     }
     if(! is_dir( $this->img_cache_dir ) ) mkdir( $this->img_cache_dir ) or php_die("Please create directory ".$this->img_cache_dir." manually".PHP_EOL);
-    $this->queue = new JSONQueue( $cache_dir, "queue.bluesky.json" );
+    //$this->queue = new JSONQueue( $cache_dir, "queue.bluesky.json" );
   }
 
 
@@ -466,13 +479,13 @@ class BlueSkyStatus
   {
     // populate message
     $this->formatted_item = sprintf( "%s (%s) for %s by %s\n\n➡️ %s\n\n%s\n\n%s ",
-                                     $item['name'],
-                                     $item['version'],
-                                     $item['architectures'],
-                                     $item['author'],
-                                     $item['repository'],
-                                     $item['sentence'],
-                                     "Topics: ".implode(" ", array_unique($item['topics']))
+      $item['name'],
+      $item['version'],
+      $item['architectures'],
+      $item['author'],
+      $item['repository'],
+      $item['sentence'],
+      "Topics: ".implode(" ", array_unique($item['topics']))
     );
     return $this->formatted_item;
   }
@@ -541,6 +554,13 @@ class BlueSkyStatus
 
     $last_10_posts = $this->api->request('GET', 'app.bsky.feed.getTimeline');
 
+    if( !array_key_exists('feed', $last_10_posts ) )
+    {
+      print_r($last_10_posts);
+      php_die("Unable to fetch last 10 posts");
+    }
+
+
     $deleteCount = 0;
 
     foreach( $last_10_posts['feed'] as $pos => $item )
@@ -556,7 +576,7 @@ class BlueSkyStatus
       }
     }
     if( $deleteCount > 0 )
-      php_die("QOTD already posted, aborting".PHP_EOL );
+      php_die("QOTD already posted, aborting".PHP_EOL, 0 );
   }
 
 

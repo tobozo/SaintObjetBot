@@ -2,7 +2,7 @@
 
 define("CACHE_DIR", "cache" );
 
-require_once("lib/MastodonStats.php");
+require_once("lib/MastodonAnalytics.php");
 
 $env = @parse_ini_file('.env') or php_die("Unable to parse ini file, forgot to rename '.env.example' to '.env'?".PHP_EOL);
 

@@ -9,43 +9,43 @@ require_once("Mastodon.php");
 
 class MastodonStats
 {
-    private $mastodon;
+    private $api;
     private $account;
 
     private $cache_dir;
     private $cache_users_dir;
-    private $cache_toots_dir;
+    private $cache_posts_dir;
 
-    private $toots_history_json;
+    private $posts_history_json;
     private $follows_history_json;
 
     private $stats_file_csv;
 
-    private $toots = [];
+    private $posts = [];
 
     private $max = 10;
 
     private $rebloggers = [];
-    private $toots_per_day = [];
+    private $posts_per_day = [];
 
 
-    public function __construct($mastodon, $cache_dir)
+    public function __construct($api, $cache_dir)
     {
-        $this->mastodon = $mastodon;
-        $this->cache_dir = $cache_dir;
-        $this->cache_users_dir      = $this->cache_dir.'/users';
-        $this->cache_toots_dir      = $this->cache_dir.'/toots';
-        $this->toots_history_json   = $this->cache_toots_dir.'/stats.json';
+        $this->api                  = $api;
+        $this->cache_dir            = $cache_dir;
+        $this->cache_users_dir      = $this->cache_dir.'/mastodon/users';
+        $this->cache_posts_dir      = $this->cache_dir.'/mastodon/posts';
+        $this->posts_history_json   = $this->cache_posts_dir.'/stats.json';
         $this->follows_history_json = $this->cache_users_dir.'/notifs.json';
-        $this->stats_file_csv       = $this->cache_toots_dir.'/stats.csv';
+        $this->stats_file_csv       = $this->cache_posts_dir.'/stats.csv';
 
-        foreach([$this->cache_dir, $this->cache_users_dir, $this->cache_toots_dir] as $dir ) {
+        foreach([$this->cache_dir, $this->cache_users_dir, $this->cache_posts_dir] as $dir ) {
             if(!is_dir($dir)) {
-                mkdir($dir) or php_die("Unable to create cache dir $dir".PHP_EOL);
+                mkdir($dir, 0777, true) or php_die("Unable to create cache dir $dir".PHP_EOL);
             }
         }
 
-        $this->account = $mastodon->getAccount();
+        $this->account = $api->getAccount();
 
         if( !is_array($this->account) )
             php_die("Bad API response".PHP_EOL);
@@ -62,38 +62,38 @@ class MastodonStats
 
     public function getToots()
     {
-        return $this->toots;
+        return $this->posts;
     }
 
     public function getTootsPerDay()
     {
-        return $this->toots_per_day;
+        return $this->posts_per_day;
     }
 
 
     public function updateToots( $force = false )
     {
-        if(file_exists($this->toots_history_json) && !$force )
+        if(file_exists($this->posts_history_json) && !$force )
         {
-            $this->toots = $this->loadJSON($this->toots_history_json) or php_die("Invalid json content");
+            $this->posts = $this->loadJSON($this->posts_history_json) or php_die("Invalid json content");
 
-            $dateLast      = $this->toots[0]['created_at'];
+            $dateLast      = $this->posts[0]['created_at'];
             $dateYesterday = date("Y-m-d", time()-86400);
 
-            $lastCacheMod = date(DATE_RFC2822, filemtime($this->toots_history_json));
+            $lastCacheMod = date(DATE_RFC2822, filemtime($this->posts_history_json));
 
-            // $cache_expired = filemtime($this->toots_history_json)+(86400) < time();
+            // $cache_expired = filemtime($this->posts_history_json)+(86400) < time();
 
-            if( filemtime($this->toots_history_json)+3600 > time() || $dateLast==$dateYesterday )
+            if( filemtime($this->posts_history_json)+3600 > time() || $dateLast==$dateYesterday )
             {
-                echo "Loading toots from cache (last mod=".$lastCacheMod.")".PHP_EOL;
+                echo "Loading posts from cache (last mod=".$lastCacheMod.")".PHP_EOL;
                 return;
             } else {
                 echo "Date expired: $dateLast != $dateYesterday (last mod=".$lastCacheMod.")".PHP_EOL;
             }
         }
 
-        $this->toots = [];
+        $this->posts = [];
 
         printf("Will scan account id %d\n", $this->account['id'] );
 
@@ -101,18 +101,18 @@ class MastodonStats
 
         while( $next_url != "" )
         {
-            $toots = $this->mastodon->callAPI($next_url, 'GET', null);
+            $posts = $this->api->callAPI($next_url, 'GET', null);
 
-            if( isset( $toots['curl_error'] ) || isset( $toots['error'] ) || isset($toots['json_error']) )
+            if( isset( $posts['curl_error'] ) || isset( $posts['error'] ) || isset($posts['json_error']) )
             {
-                $this->saveJSON($this->toots_history_json.".err", $this->toots);// or php_die("Unable to save stats file".PHP_EOL);
-                php_die("An API request to $next_url failed after collecting ".count($this->toots)." record(s)".PHP_EOL);
+                $this->saveJSON($this->posts_history_json.".err", $this->posts);// or php_die("Unable to save stats file".PHP_EOL);
+                php_die("An API request to $next_url failed after collecting ".count($this->posts)." record(s)".PHP_EOL);
             }
 
-            if( empty($toots) )
+            if( empty($posts) )
                 break;
 
-            foreach($toots as $toot)
+            foreach($posts as $toot)
             {
                 if( $toot['in_reply_to_id'] !== null || $toot['in_reply_to_account_id'] !== null )
                 {
@@ -137,7 +137,7 @@ class MastodonStats
 
                 $date = current(explode("T", $toot['created_at'] ));
 
-                $this->toots[] = [
+                $this->posts[] = [
                     'id'               => $toot['id'],
                     'created_at'       => $date,
                     'reblogs_count'    => $toot['reblogs_count'],
@@ -149,11 +149,11 @@ class MastodonStats
                 echo sprintf("[%s][RT:%2d][RE:%2d][FAV:%2d] %s".PHP_EOL, $date, $toot['reblogs_count'], $toot['replies_count'], $toot['favourites_count'], $matches[1] );
             }
 
-            $next_url = $this->mastodon->getNextPage();
+            $next_url = $this->api->getNextPage();
             sleep(5);
         }
 
-        $this->saveJSON($this->toots_history_json, $this->toots) or php_die("Unable to save stats file".PHP_EOL);
+        $this->saveJSON($this->posts_history_json, $this->posts) or php_die("Unable to save stats file".PHP_EOL);
     }
 
 
@@ -161,7 +161,7 @@ class MastodonStats
     // get all contexts and replies for a given status id
     private function getAllContexts( $toot_id )
     {
-        $context_filename = $this->cache_toots_dir."/".$toot_id."_context.json";
+        $context_filename = $this->cache_posts_dir."/".$toot_id."_context.json";
 
         // TODO: set cache expiration to 24h if toot is less than 1 week old
         if( file_exists($context_filename) )
@@ -195,7 +195,7 @@ class MastodonStats
 
         while( $next_url != "" )
         {
-            $context = $this->mastodon->callAPI($next_url, 'GET', null);
+            $context = $this->api->callAPI($next_url, 'GET', null);
 
             if( isset( $context['curl_error'] ) || isset( $context['error'] ) || isset($context['json_error']) )
             {
@@ -210,7 +210,7 @@ class MastodonStats
 
             $contexts['descendants'] = array_merge($context['descendants'], $contexts['descendants']);
 
-            $next_url = $this->mastodon->getNextPage();
+            $next_url = $this->api->getNextPage();
             sleep(5);
         }
 
@@ -219,7 +219,7 @@ class MastodonStats
         {
             if( substr_count($contexts['descendants'][$num]['account']['acct'], '@' ) === 0 )
             {
-                $contexts['descendants'][$num]['account']['acct'] .= '@'.$this->mastodon->getInstanceHost(); // "@piaille.fr";
+                $contexts['descendants'][$num]['account']['acct'] .= '@'.$this->api->getInstanceHost(); // "@piaille.fr";
             }
 
 
@@ -257,23 +257,23 @@ class MastodonStats
 
     public function updateReplies()
     {
-        $this->toots = $this->loadJSON($this->toots_history_json) or php_die("Invalid json content");
+        $this->posts = $this->loadJSON($this->posts_history_json) or php_die("Invalid json content");
 
         $total_replies = 0;
 
-        foreach( $this->toots as $num => $toot )
+        foreach( $this->posts as $num => $toot )
         {
             $total_replies += $toot['replies_count'];
         }
 
         echo sprintf("Checking/updating %d replies".PHP_EOL, $total_replies );
 
-        foreach( $this->toots as $num => $toot )
+        foreach( $this->posts as $num => $toot )
         {
             if( $toot['replies_count'] == 0 )
                 continue;
 
-            $this->toots[$num]['replies'] = [];
+            $this->posts[$num]['replies'] = [];
 
             $contexts = $this->getAllContexts( $toot['id'] );
 
@@ -283,11 +283,11 @@ class MastodonStats
             {
                 if( substr_count($context['account']['acct'], '@' ) === 0 )
                 {
-                    $context['account']['acct'] .= '@'.$this->mastodon->getInstanceHost(); // "@piaille.fr";
+                    $context['account']['acct'] .= '@'.$this->api->getInstanceHost(); // "@piaille.fr";
                 }
 
                 $message = html_entity_decode(strip_tags($context['content']), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                $message = str_replace("@SaintObjetBot@".$this->mastodon->getInstanceHost(), "", $message);
+                $message = str_replace("@SaintObjetBot@".$this->api->getInstanceHost(), "", $message);
                 $message = str_replace("@SaintObjetBot", "", $message);
                 $message = trim($message);
 
@@ -297,7 +297,7 @@ class MastodonStats
 
                 echo "  - ".$content.PHP_EOL;
 
-                $this->toots[$num]['replies'][$context['id']] = [
+                $this->posts[$num]['replies'][$context['id']] = [
                     'acct'              => $context['account']['acct'],
                     'content'           => $context['content'],
                     'replies_count'     => $context['replies_count'],
@@ -310,25 +310,25 @@ class MastodonStats
 
         echo PHP_EOL;
 
-        $this->saveJSON($this->toots_history_json, $this->toots) or php_die("Unable to save stats file".PHP_EOL);
+        $this->saveJSON($this->posts_history_json, $this->posts) or php_die("Unable to save stats file".PHP_EOL);
     }
 
 
 
     public function updateReblogs()
     {
-        $this->toots = $this->loadJSON($this->toots_history_json) or php_die("Invalid json content");
+        $this->posts = $this->loadJSON($this->posts_history_json) or php_die("Invalid json content");
 
-        echo sprintf("Checking/updating rebloggers (%d toots)".PHP_EOL, count($this->toots) );
+        echo sprintf("Checking/updating rebloggers (%d posts)".PHP_EOL, count($this->posts) );
 
-        foreach( $this->toots as $num => $toot )
+        foreach( $this->posts as $num => $toot )
         {
             if(!isset($toot['rebloggers']))
                 $toot['rebloggers'] = [];
 
             $delay = 5; // seconds between API calls
             $toot_time = strtotime($toot['created_at']);
-            $reblogs_filename = $this->cache_toots_dir."/".$toot['id']."_reblogged_by.json";
+            $reblogs_filename = $this->cache_posts_dir."/".$toot['id']."_reblogged_by.json";
             $cache_exists = file_exists($reblogs_filename);
 
             $logstatus = "";
@@ -337,14 +337,18 @@ class MastodonStats
             {
                 $load_cache = true;
                 $logstatus = '@';
-            } else {
+            }
+            else
+            {
                 if( $cache_exists )
                 {
                     if( filemtime($reblogs_filename)+(86400) > time() ) // cache is less than one day old
                     {
                         $load_cache = true;
                         $logstatus = '&';
-                    } else {
+                    }
+                    else
+                    {
                         $load_cache = (rand()%8==0); // GC probability = 12.5%
                         $logstatus = $load_cache?'C':'G';
                     }
@@ -376,7 +380,7 @@ class MastodonStats
 
                 while( $next_url != "" )
                 {
-                    $reblogged_by = $this->mastodon->callAPI($next_url, 'GET', null);
+                    $reblogged_by = $this->api->callAPI($next_url, 'GET', null);
 
                     if( isset( $reblogged_by['curl_error'] ) || isset( $reblogged_by['error'] ) || isset($reblogged_by['json_error']) )
                     {
@@ -387,7 +391,7 @@ class MastodonStats
                         break;
 
                     $reblogs = array_merge($reblogged_by, $reblogs);
-                    $next_url = $this->mastodon->getNextPage();
+                    $next_url = $this->api->getNextPage();
                     sleep($delay);
                 }
 
@@ -423,14 +427,14 @@ class MastodonStats
                     'statuses_count'  => $user['statuses_count']
                 ];
                 $this->saveJSON($this->cache_users_dir.'/'.$user['id'].'.json', $user_arr) or php_die("Unable to save user id file".PHP_EOL);
-                $this->toots[$num]['rebloggers'][$user['id']] = $user_arr;
+                $this->posts[$num]['rebloggers'][$user['id']] = $user_arr;
             }
             sleep($delay);
         }
 
         echo PHP_EOL;
 
-        $this->saveJSON($this->toots_history_json, $this->toots) or php_die("Unable to save stats file".PHP_EOL);
+        $this->saveJSON($this->posts_history_json, $this->posts) or php_die("Unable to save stats file".PHP_EOL);
     }
 
 
@@ -468,7 +472,7 @@ class MastodonStats
 
         while( $next_url != "" )
         {
-            $notifications = $this->mastodon->callAPI($next_url, 'GET', null);
+            $notifications = $this->api->callAPI($next_url, 'GET', null);
 
             if( isset( $notifications['curl_error'] ) || isset( $notifications['error'] ) || isset($notifications['json_error']) )
             {
@@ -482,7 +486,7 @@ class MastodonStats
             {
                 if( substr_count($notification['account']['acct'], '@' ) === 0 )
                 {
-                    $notification['account']['acct'] .= '@'.$this->mastodon->getInstanceHost();
+                    $notification['account']['acct'] .= '@'.$this->api->getInstanceHost();
                 }
 
                 $date_ary = date_parse($notification['created_at']);
@@ -504,7 +508,7 @@ class MastodonStats
                 echo sprintf("[%s] New Follower: @%s ".PHP_EOL, $notification['created_at'], $notification['account']['acct']);
             }
 
-            $next_url = $this->mastodon->getNextPage();
+            $next_url = $this->api->getNextPage();
             sleep(5);
         }
 
@@ -519,9 +523,9 @@ class MastodonStats
 
     public function genStats()
     {
-        $this->toots = $this->loadJSON($this->toots_history_json) or php_die("Invalid json content in ".$this->toots_history_json);
+        $this->posts = $this->loadJSON($this->posts_history_json) or php_die("Invalid json content in ".$this->posts_history_json);
 
-        if( empty($this->toots ) )
+        if( empty($this->posts ) )
             php_die("genStats: nothing to do".PHP_EOL);
 
         $this->calcRebloggers();
@@ -577,7 +581,7 @@ class MastodonStats
         {
             if( substr_count($user['acct'], '@' ) === 0 )
             {
-                $user['acct'] .= '@'.$this->mastodon->getInstanceHost();
+                $user['acct'] .= '@'.$this->api->getInstanceHost();
             }
 
             echo sprintf("[TOTAL REBLOGS:%3d] Followers:%5d, Posts:%5d - @%s".PHP_EOL, $user['reblogs_count'], $user['followers_count'], $user['statuses_count'], $user['acct'] );
@@ -589,15 +593,15 @@ class MastodonStats
 
     public function printReach( $max = 10 )
     {
-        if( empty($this->toots ) )
+        if( empty($this->posts ) )
         {
             echo "printReach: nothing to do".PHP_EOL;
             return;
         }
 
         echo PHP_EOL."SaintObjets with most reached accounts (REACH=rebloggers' followers):".PHP_EOL;
-        usort($this->toots, fn($a, $b) => ($a['reach'] < $b['reach']));
-        foreach($this->toots as $num => $toot)
+        usort($this->posts, fn($a, $b) => ($a['reach'] < $b['reach']));
+        foreach($this->posts as $num => $toot)
         {
             echo sprintf("[REACH:%5d] (RT:%2d, RE:%2d, FAV:%2d) [%s] %s".PHP_EOL, $toot['reach'], $toot['reblogs_count'], $toot['replies_count'], $toot['favourites_count'], $toot['created_at'], $toot['object'] );
             if($num+1>=$max)
@@ -607,15 +611,15 @@ class MastodonStats
 
     public function printEngagement( $max = 10 )
     {
-        if( empty($this->toots ) )
+        if( empty($this->posts ) )
         {
             echo "printEngagement: nothing to do".PHP_EOL;
             return;
         }
 
         echo PHP_EOL."SaintObjets with most interactions (RANK=RT+RE+FAV):".PHP_EOL;
-        usort($this->toots, fn($a, $b) => ($a['rank'] > $b['rank']));
-        foreach($this->toots as $num => $toot)
+        usort($this->posts, fn($a, $b) => ($a['rank'] > $b['rank']));
+        foreach($this->posts as $num => $toot)
         {
             echo sprintf("[RANK: %d] (RT:%2d, RE:%2d, FAV:%2d) [%s] %s".PHP_EOL, $toot['rank'], $toot['reblogs_count'], $toot['replies_count'], $toot['favourites_count'], $toot['created_at'], $toot['object'] );
             if($num+1>=$max)
@@ -626,15 +630,15 @@ class MastodonStats
 
     public function printReblogs( $max = 10 )
     {
-        if( empty($this->toots ) )
+        if( empty($this->posts ) )
         {
             echo "printReblogs: nothing to do".PHP_EOL;
             return;
         }
 
         echo PHP_EOL."SaintObjets with most reblogs:".PHP_EOL;
-        usort($this->toots, fn($a, $b) => ($a['reblogs_count'] < $b['reblogs_count']));
-        foreach($this->toots as $num => $toot)
+        usort($this->posts, fn($a, $b) => ($a['reblogs_count'] < $b['reblogs_count']));
+        foreach($this->posts as $num => $toot)
         {
             echo sprintf("[REBLOGS:%2d] (RE:%2d, FAV:%2d) [%s] %s".PHP_EOL, $toot['reblogs_count'], $toot['replies_count'], $toot['favourites_count'], $toot['created_at'], $toot['object'] );
             if($num+1>=$max)
@@ -646,15 +650,15 @@ class MastodonStats
 
     public function printFavourites( $max = 10 )
     {
-        if( empty($this->toots ) )
+        if( empty($this->posts ) )
         {
             echo "printFavourites: nothing to do".PHP_EOL;
             return;
         }
 
         echo PHP_EOL."SaintObjets with most favourites:".PHP_EOL;
-        usort($this->toots, fn($a, $b) => ($a['favourites_count'] < $b['favourites_count']));
-        foreach($this->toots as $num => $toot)
+        usort($this->posts, fn($a, $b) => ($a['favourites_count'] < $b['favourites_count']));
+        foreach($this->posts as $num => $toot)
         {
             echo sprintf("[FAV:%2d] (RT:%2d, RE:%2d) [%s] %s".PHP_EOL, $toot['favourites_count'], $toot['reblogs_count'], $toot['replies_count'], $toot['created_at'], $toot['object'] );
             if($num+1>=$max)
@@ -665,7 +669,7 @@ class MastodonStats
 
     public function printRepliers( $max = 10 )
     {
-        if( empty($this->toots ) )
+        if( empty($this->posts ) )
         {
             echo "printRepliers: nothing to do".PHP_EOL;
             return;
@@ -673,7 +677,7 @@ class MastodonStats
 
         $users = [];
 
-        foreach($this->toots as $num => $toot)
+        foreach($this->posts as $num => $toot)
         {
             if( isset($toot['replies']) && count($toot['replies'])>0 )
             {
@@ -730,22 +734,22 @@ class MastodonStats
 
     public function printReplies( $max = 10 )
     {
-        if( empty($this->toots ) )
+        if( empty($this->posts ) )
         {
             echo "printReplies: nothing to do".PHP_EOL;
             return;
         }
 
         echo PHP_EOL."SaintObjets with most replies:".PHP_EOL;
-        usort($this->toots, [MastodonStats::class, "repliesComp"]);
-        foreach($this->toots as $num => $toot)
+        usort($this->posts, [MastodonStats::class, "repliesComp"]);
+        foreach($this->posts as $num => $toot)
         {
             echo sprintf("[REPLIES:%2d] (RT:%2d, FAV:%2d) [%s] %s".PHP_EOL, $toot['replies_count'], $toot['reblogs_count'], $toot['favourites_count'], $toot['created_at'], $toot['object'] );
 
             foreach($toot['replies'] as $reply)
             {
                 $message = html_entity_decode(strip_tags($reply['content']), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                $message = str_replace("@SaintObjetBot@".$this->mastodon->getInstanceHost(), "", $message);
+                $message = str_replace("@SaintObjetBot@".$this->api->getInstanceHost(), "", $message);
                 $message = str_replace("@SaintObjetBot", "", $message);
                 $message = trim($message);
 
@@ -764,12 +768,12 @@ class MastodonStats
 
     private function calcRebloggers()
     {
-        if( empty($this->toots ) )
+        if( empty($this->posts ) )
             php_die("calcRebloggers: nothing to do".PHP_EOL);
 
         $this->rebloggers = [];
         // calculate reach/rank and memoize users
-        foreach($this->toots as $num => $toot)
+        foreach($this->posts as $num => $toot)
         {
 
             if(isset($toot['replies']))
@@ -781,8 +785,8 @@ class MastodonStats
                 }
             }
 
-            $this->toots[$num]['reach'] = 0;
-            $this->toots[$num]['rank']  = $toot['favourites_count']+$toot['reblogs_count']+$toot['replies_count'];
+            $this->posts[$num]['reach'] = 0;
+            $this->posts[$num]['rank']  = $toot['favourites_count']+$toot['reblogs_count']+$toot['replies_count'];
 
             if( isset($toot['rebloggers']) )
             {
@@ -794,7 +798,7 @@ class MastodonStats
                         $this->rebloggers[$user_id]['reblogs_count'] = 0;
                     }
                     $this->rebloggers[$user_id]['reblogs_count']++; // increment assiduity for user
-                    $this->toots[$num]['reach'] += $user['followers_count']; // sum followers for toot
+                    $this->posts[$num]['reach'] += $user['followers_count']; // sum followers for toot
                 }
             }
         }
@@ -807,26 +811,26 @@ class MastodonStats
             php_die("Update followers first!".PHP_EOL);
 
         $follows_per_day = $this->loadJSON($this->follows_history_json) or php_die("Unable to read follows per day".PHP_EOL);
-        $this->toots_per_day = [];
+        $this->posts_per_day = [];
 
-        foreach($this->toots as $toot)
+        foreach($this->posts as $toot)
         {
             $count = isset( $follows_per_day[$toot['created_at']] ) ? $follows_per_day[$toot['created_at']] : 0;
             $toot['follows'] = $count;
-            $this->toots_per_day[$toot['created_at']] = $toot;
+            $this->posts_per_day[$toot['created_at']] = $toot;
         }
     }
 
     private function calcRank()
     {
-        if( empty($this->toots ) )
+        if( empty($this->posts ) )
             php_die("calcRank: nothing to do".PHP_EOL);
 
-        usort($this->toots, fn($a, $b) => ($a['rank'] < $b['rank']));
+        usort($this->posts, fn($a, $b) => ($a['rank'] < $b['rank']));
         $rank = 1;
-        foreach($this->toots as $num => $toot)
+        foreach($this->posts as $num => $toot)
         {
-            $this->toots[$num]['rank'] = $rank;
+            $this->posts[$num]['rank'] = $rank;
             $rank++;
         }
     }
@@ -834,20 +838,20 @@ class MastodonStats
 
     private function genCSVStats()
     {
-        if( empty($this->toots ) )
+        if( empty($this->posts ) )
             php_die("genCSVStats: nothing to do".PHP_EOL);
 
         // save stats as csv
-        usort($this->toots, fn($a, $b) => (date_parse($a['created_at']) > date_parse($b['created_at'])));
+        usort($this->posts, fn($a, $b) => (date_parse($a['created_at']) > date_parse($b['created_at'])));
         $fp = fopen($this->stats_file_csv, 'w');
         fputcsv($fp, ["created_at", "id", "object", "follows", "followers (total)", "reach", "rank", "reblogs_count", "replies_count", "favourites_count", "followers_avg"] );
         $followers = 0;
         $followers_avg = 0;
-        foreach($this->toots as $num => $toot)
+        foreach($this->posts as $num => $toot)
         {
             // consolidate with follows count collected from notifications history
-            $toot['follows'] = ( !empty($this->toots_per_day) && isset($this->toots_per_day[$toot['created_at']]) && isset($this->toots_per_day[$toot['created_at']]['follows']) )
-                ? $this->toots_per_day[$toot['created_at']]['follows']
+            $toot['follows'] = ( !empty($this->posts_per_day) && isset($this->posts_per_day[$toot['created_at']]) && isset($this->posts_per_day[$toot['created_at']]['follows']) )
+                ? $this->posts_per_day[$toot['created_at']]['follows']
                 : 0
             ;
             $followers += $toot['follows'];
