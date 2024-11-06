@@ -138,7 +138,7 @@ class BlueskyAgent
 
             if(!isset($resp['cursor']) )
             {
-                echo "No more cursor".PHP_EOL;
+                //echo "No more cursor".PHP_EOL;
                 break;
             }
 
@@ -150,7 +150,7 @@ class BlueskyAgent
 
             $cursor = $resp['cursor'];
 
-            sleep(1);
+            // sleep(1);
         }
 
         return $followers;
@@ -170,7 +170,8 @@ class BlueskyAgent
         $followers = $this->getFollowers();
         $ret = [
             'arduinolibs.bsky.social',
-            'savingsdeal.bsky.social'
+            'savingsdeal.bsky.social',
+            'handle.invalid'
         ];
         foreach($followers as $follower)
         {
@@ -249,23 +250,25 @@ class BlueskyAgent
         {
             if( in_array($post['author']['handle'], $ignoredHandles) )
             {
-                // echo "Ignoring post from ".$post['author']['handle'].PHP_EOL;
+                echo "Ignoring post from ".$post['author']['handle'].PHP_EOL;
                 continue; // ignore posts by me or blacklisted accounts
             }
 
             $needs_like = true;
-            $liked_by_me_filename = $this->cache_dir.'/'.$post['cid'].'.json';
+            $liked_by_me_filename = $this->cache_dir.'/cid/'.$post['cid'].'.json';
             $needs_like_filename  = $this->cache_dir.'/needs-like-'.$post['cid'].'.json';
             $likes = [];
             $uriParts = explode('/', $post['uri']);
             $url = sprintf("https://bsky.app/profile/%s/post/%s", $post['author']['handle'], end($uriParts) );
 
-            if( file_exists($liked_by_me_filename) ) {
+            if( file_exists($liked_by_me_filename) )
+            {
                 //echo "[#$num] This cached post was already liked: ".$url.PHP_EOL;
                 continue;
             }
 
-            if( file_exists($needs_like_filename) ) {
+            if( file_exists($needs_like_filename) )
+            {
                 echo sprintf("[#$num] This cached post has %d likes but wasn't liked by me: %s".PHP_EOL, $post['likeCount'], $url);
                 $posts_to_like[] = $post;
                 continue;

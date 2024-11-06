@@ -1,7 +1,5 @@
 <?php
 
-define("CACHE_DIR", "cache" );
-
 require_once("lib/MastodonAnalytics.php");
 
 $env = @parse_ini_file('.env') or php_die("Unable to parse ini file, forgot to rename '.env.example' to '.env'?".PHP_EOL);
@@ -12,7 +10,7 @@ if( !isset( $env["MASTODON_API_TOKEN"] ) || !isset( $env["MASTODON_API_SERVER"] 
 }
 
 $mastodon = new SocialPlatform\MastodonAPI( $env["MASTODON_API_TOKEN"], $env["MASTODON_API_SERVER"] );
-$stats    = new SocialPlatform\MastodonStats($mastodon, CACHE_DIR);
+$stats    = new SocialPlatform\MastodonStats($mastodon);
 
 if( isset($argv[1]) && $argv[1] == "update" )
 {

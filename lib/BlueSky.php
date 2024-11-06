@@ -13,6 +13,46 @@ use \SocialPlatform\GithubInfoFetcher;
 // - https://github.com/cjrasmussen/BlueskyApi
 // - https://james.cridland.net/blog/2023/php-posting-to-bluesky/
 // - https://github.com/friendica/friendica-addons/tree/develop/bluesky
+// - https://github.com/potibm/phluesky/
+
+
+class BlueskyUri
+{
+  private array $parts;
+
+  public function __construct( string $uri )
+  {
+    // strip off the protocol
+    $uri = substr($uri, 5);
+    $this->parts = explode('/', $uri);
+  }
+
+  public function getUri(): string
+  {
+    return $this->uri;
+  }
+
+  public function getDID(): string
+  {
+    return $this->parts[0];
+  }
+
+  public function getNSID(): string
+  {
+    return $this->parts[1];
+  }
+
+  public function getRecord(): string
+  {
+    return $this->parts[2];
+  }
+
+  public function __toString(): string
+  {
+    return $this->uri;
+  }
+}
+
 
 /**
  * Class for interacting with the Bluesky API/AT protocol

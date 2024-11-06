@@ -12,7 +12,7 @@ class MastodonStats
     private $api;
     private $account;
 
-    private $cache_dir;
+    private $cache_dir = "cache/mastodon";
     private $cache_users_dir;
     private $cache_posts_dir;
 
@@ -29,15 +29,14 @@ class MastodonStats
     private $posts_per_day = [];
 
 
-    public function __construct($api, $cache_dir)
+    public function __construct($api)
     {
         $this->api                  = $api;
-        $this->cache_dir            = $cache_dir;
-        $this->cache_users_dir      = $this->cache_dir.'/mastodon/users';
-        $this->cache_posts_dir      = $this->cache_dir.'/mastodon/posts';
+        $this->cache_users_dir      = $this->cache_dir.'/users';
+        $this->cache_posts_dir      = $this->cache_dir.'/posts';
         $this->posts_history_json   = $this->cache_posts_dir.'/stats.json';
         $this->follows_history_json = $this->cache_users_dir.'/notifs.json';
-        $this->stats_file_csv       = $this->cache_posts_dir.'/stats.csv';
+        $this->stats_file_csv       = $this->cache_dir.'/stats.csv';
 
         foreach([$this->cache_dir, $this->cache_users_dir, $this->cache_posts_dir] as $dir ) {
             if(!is_dir($dir)) {
@@ -116,22 +115,24 @@ class MastodonStats
             {
                 if( $toot['in_reply_to_id'] !== null || $toot['in_reply_to_account_id'] !== null )
                 {
-                    echo 'Skipping toot id '.$toot['id'].' (is a reply)'.PHP_EOL;
+                    // echo 'Skipping toot id '.$toot['id'].' (is a reply)'.PHP_EOL;
                     continue;
                 }
 
                 $pattern = "/c'est la Sainte?-([^\.]+)/";
                 $content = html_entity_decode(strip_tags($toot['content']), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
+                // if(!str_starts_with($toot['text'], 'Chalut')) // not a SaintObjet post
+
                 if( !preg_match( $pattern, $content, $matches ) )
                 {
-                    echo("Skipping Invalid toot: ".$content.PHP_EOL );
+                    // echo("Skipping unrelated toot: ".$content.PHP_EOL );
                     continue;
                 }
 
-                if( !isset($matches[1]) )
+                if( !isset($matches[1]) ) // condition probably redundant with previous preg_match test
                 {
-                    echo("Skipping unrelated toot: ".$content.PHP_EOL );
+                    // echo("Skipping invalid toot: ".$content.PHP_EOL );
                     continue;
                 }
 
@@ -531,6 +532,7 @@ class MastodonStats
         $this->calcRebloggers();
         $this->calcFollowsPerDay();
         $this->calcRank();
+        //$this->calcPonderated();
         $this->genCSVStats();
     }
 
@@ -550,17 +552,20 @@ class MastodonStats
             echo ("gnuplot is not installed!".PHP_EOL);
             return;
         }
-        if(!file_exists($out[0])) {
+        if(!file_exists($out[0]))
+        {
             echo ("gnuplot not reachable:  ".$out[0].PHP_EOL);
             return;
         }
 
         $gnuplot = $out[0];
 
-        $format = "%s -e \"filename='%s'; width=%d; height=%d;\" %s";
+        $plotprefix = "Grouchabot Mastodon:";
 
-        $execFollowers = sprintf($format, $gnuplot, $this->stats_file_csv, 1280, 748, "data/followers.gnuplot");
-        $execReach = sprintf($format, $gnuplot, $this->stats_file_csv, 1280, 748, "data/reach.gnuplot");
+        $format = "%s -e \"outputtitle='%s'; outputfilename='%s'; filename='%s'; width=%d; height=%d;\" %s";
+
+        $execFollowers = sprintf($format, $gnuplot, "$plotprefix Followers Growth",   "$this->cache_dir/followers.png", $this->stats_file_csv, $width, $height, "data/followers.gnuplot");
+        $execReach     = sprintf($format, $gnuplot, "$plotprefix Reach vs Followers", "$this->cache_dir/reach.png",     $this->stats_file_csv, $width, $height, "data/reach.gnuplot");
 
         exec($execFollowers);
         exec($execReach);
@@ -618,10 +623,21 @@ class MastodonStats
         }
 
         echo PHP_EOL."SaintObjets with most interactions (RANK=RT+RE+FAV):".PHP_EOL;
-        usort($this->posts, fn($a, $b) => ($a['rank'] > $b['rank']));
+
+
+        foreach($this->posts as $num => $toot )
+        {
+            $this->posts[$num]['rank'] = $toot['reblogs_count']+$toot['replies_count']+$toot['favourites_count'];
+        }
+
+        usort($this->posts, fn($a, $b) => ($a['rank'] < $b['rank']));
+
+        $rankval = 0;
+
         foreach($this->posts as $num => $toot)
         {
-            echo sprintf("[RANK: %d] (RT:%2d, RE:%2d, FAV:%2d) [%s] %s".PHP_EOL, $toot['rank'], $toot['reblogs_count'], $toot['replies_count'], $toot['favourites_count'], $toot['created_at'], $toot['object'] );
+            $rankval++;
+            echo sprintf("[RANK: %d] (RT:%2d, RE:%2d, FAV:%2d) [%s] %s".PHP_EOL, $rankval, $toot['reblogs_count'], $toot['replies_count'], $toot['favourites_count'], $toot['created_at'], $toot['object'] );
             if($num+1>=$max)
                 break;
         }
@@ -835,6 +851,62 @@ class MastodonStats
         }
     }
 
+    // private function calcPonderated()
+    // {
+    //     if( empty($this->posts ) )
+    //         php_die("calcPonderated: nothing to do".PHP_EOL);
+    //
+    //     // get min/max reach
+    //     usort($this->posts, fn($a, $b) => ($a['reach'] < $b['reach']));
+    //     $max = 1;
+    //     $min = PHP_INT_MAX;
+    //     foreach($this->posts as $num => $toot)
+    //     {
+    //         if( $toot['reach'] > $max )
+    //         {
+    //             $max = $toot['reach'];
+    //         }
+    //         else if($toot['reach'] >0 && $toot['reach'] < $min )
+    //         {
+    //             $min = $toot['reach'];
+    //         }
+    //     }
+    //
+    //     echo sprintf("min/max reach: %d..%d".PHP_EOL, $min, $max);
+    //
+    //
+    //     $span = count($this->posts);
+    //     $pos = 0;
+    //     $sum = 0;
+    //     $followers = 0;
+    //
+    //     // sort by date
+    //     usort($this->posts, fn($a, $b) => (date_parse($a['created_at']) > date_parse($b['created_at'])));
+    //     foreach($this->posts as $num => $toot)
+    //     {
+    //         // consolidate with follows count collected from notifications history
+    //         $toot['follows'] = ( !empty($this->posts_per_day) && isset($this->posts_per_day[$toot['created_at']]) && isset($this->posts_per_day[$toot['created_at']]['follows']) )
+    //         ? $this->posts_per_day[$toot['created_at']]['follows']
+    //         : 0
+    //         ;
+    //         $followers += $toot['follows'];
+    //
+    //         if( $followers == 0 )
+    //             $performance = 0;
+    //         else
+    //             $performance = $toot['reach']/$followers;
+    //
+    //         echo sprintf("perf: %8.2F".PHP_EOL, $performance);
+    //
+    //         // $pos++;
+    //         // $ratio = $span/$pos;
+    //         // $ponderated = $toot['reach']*$ratio;
+    //         // $sum += $ponderated;
+    //         // echo sprintf("reach: %5d, ratio: %7.2F, ponderated: %8.2F, sum: %8d".PHP_EOL, $toot['reach'], $ratio, $ponderated, $sum);
+    //     }
+    //     exit;
+    // }
+
 
     private function genCSVStats()
     {
@@ -844,9 +916,11 @@ class MastodonStats
         // save stats as csv
         usort($this->posts, fn($a, $b) => (date_parse($a['created_at']) > date_parse($b['created_at'])));
         $fp = fopen($this->stats_file_csv, 'w');
-        fputcsv($fp, ["created_at", "id", "object", "follows", "followers (total)", "reach", "rank", "reblogs_count", "replies_count", "favourites_count", "followers_avg"] );
+        fputcsv($fp, ["created_at", "id", "object", "follows", "followers (total)", "reach", "rank", "reblogs_count", "replies_count", "favourites_count", "followers_avg", "reach_avg", "performance", "total_reach"] );
         $followers = 0;
         $followers_avg = 0;
+        $total_reach = 0;
+        $reach_days  = 0;
         foreach($this->posts as $num => $toot)
         {
             // consolidate with follows count collected from notifications history
@@ -861,7 +935,16 @@ class MastodonStats
                 $followers_avg += $followers/$num;
             }
 
-            fputcsv($fp, [ $toot['created_at'], $toot['id'], $toot['object'], $toot['follows'], $followers, $toot['reach'], $toot['rank'], $toot['reblogs_count'], $toot['replies_count'], $toot['favourites_count'], $followers_avg ] );
+            if( $followers < 250 || $followers_avg==0 )
+                $performance = $toot['reach']/250;
+            else
+                $performance = $toot['reach']/$followers_avg;
+
+            $reach_days++;
+            $total_reach += $toot['reach'];
+            $reach_avg = $total_reach/$reach_days;
+
+            fputcsv($fp, [ $toot['created_at'], $toot['id'], $toot['object'], $toot['follows'], $followers, $toot['reach'], $toot['rank'], $toot['reblogs_count'], $toot['replies_count'], $toot['favourites_count'], $followers_avg, $reach_avg, $performance, $total_reach ] );
         }
         fclose($fp);
     }

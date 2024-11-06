@@ -111,14 +111,24 @@ class MastodonAgent
         $res = $this->querySince($mentions_query_url, $this->mentionsFile);
 
         $mentions = [];
-        foreach($res as $item)
+        foreach($res as $idx => $item)
         {
             if( !array_key_exists('status', $item))
             {
-                print_r($item);
-                php_die("DOH");
+                if( isset($item['id']) && isset($item['url']) && isset($item['visibility']) )
+                    $status = $item;
+                else
+                {
+                    echo "Can't process this (no status):";
+                    print_r($item);
+                    continue;
+                }
+                //php_die("DOH $idx");
             }
-            $status = $item['status'];
+            else
+            {
+                $status = $item['status'];
+            }
             // if( $status['visibility'] != 'public' )
             //     continue;
             $mentions[] = [
@@ -202,13 +212,22 @@ class MastodonAgent
         );
 
         $totalStatuses = 0;
+        $search_args = $arr;
 
-        foreach($keywords as $keyword)
+        foreach($keywords as $num => $keyword)
         {
-            $arr['keyword'] = $keyword;
+            if( $num == 0 )
+            {
+                //echo "No time limit for first keyword '$keyword'";
+                unset($search_args['latest']);
+            }
+            else
+                $search_args = $arr;
 
-            //$keyword_results = $this->searchKeyword( $arr );
-            $keyword_results = $this->searchHashtag( $arr );
+            $search_args['keyword'] = $keyword;
+
+            //$keyword_results = $this->searchKeyword( $search_args );
+            $keyword_results = $this->searchHashtag( $search_args );
 
             file_put_contents($this->search_cache_dir."/hashtag-$keyword.json", json_encode( $keyword_results, JSON_PRETTY_PRINT ) ) or php_die("Unable to cache search results".PHP_EOL);
 
@@ -220,7 +239,7 @@ class MastodonAgent
             {
                 if(empty($status) || !isset($status['id']))
                 {
-                    echo "Indigest status at offset $num".PHP_EOL;
+                    echo "Indigest status".PHP_EOL;
                     print_r($status);
                     php_die();
                 }
@@ -263,9 +282,6 @@ class MastodonAgent
         $keyword_file = $this->search_cache_dir."/$keyword.json";
         file_put_contents($keyword_file, json_encode($arr, JSON_PRETTY_PRINT)) or php_die("Unable to save keyword file $keyword_file".PHP_EOL);
     }
-
-
-
 
 
 
@@ -374,7 +390,6 @@ class MastodonAgent
             }
 
             $linkRelNext = $this->mastodon->getNextPage();
-            //sleep(3);
         }
 
         echo PHP_EOL;
@@ -490,7 +505,6 @@ class MastodonAgent
             }
 
             $linkRelNext = $this->buildUrl( $args );
-            //sleep(3);
         }
 
         echo PHP_EOL;
@@ -565,7 +579,6 @@ class MastodonAgent
                     print_r($fav);
                     echo "[WARNING] FAILED to favourite ".$status['url'].PHP_EOL;
                 }
-                //sleep(3);
             }
         }
 
@@ -594,9 +607,7 @@ class MastodonAgent
                     echo "Favourited Mention ".$status['url'].PHP_EOL;
                     $this->ignoredStatuses[] = $status['id'];
                 }
-                //sleep(3);
             }
-
         }
 
         file_put_contents($this->ignoredStatusesFile, json_encode($this->ignoredStatuses, JSON_PRETTY_PRINT));

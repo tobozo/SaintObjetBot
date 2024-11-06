@@ -11,9 +11,27 @@ if( !isset( $env["MASTODON_API_TOKEN"] ) || !isset( $env["MASTODON_API_SERVER"] 
     php_die("Missing credentials for mastodon, check your env file!".PHP_EOL );
 }
 
+$calendar = getCSVData("data/saint-objet-bot-2023-11-09.csv");
+$quote_data = getQuoteData(time(), $calendar);
+
+//print_r($quote_data);exit;
+
 $app = new SocialPlatform\MastodonAgent($env);
 
-$keywords = [ 'téléchat', 'casimir', 'récréa2', 'albator', 'bibifoc', 'chapichapo', 'cosmocats', 'goldorak', 'papivole', 'gluon', 'terteur', 'leguman', 'chalut', 'Duralo', 'durallo', 'duramou', 'brossedur', 'pubpub', 'MicMac' ];
+$keywords = [ 'téléchat', 'casimir', 'récréa2', 'albator', 'bibifoc', 'chapichapo', 'cosmocats', 'goldorak', 'actarus', 'papivole', 'gluon', 'terteur', 'leguman', 'chalut', 'Duralo', 'durallo', 'duramou', 'brossedur', 'pubpub', 'MicMac' ];
+
+if( preg_match('/^(?=.{2,140}$)([0-9_\p{L}]*[_\p{L}][0-9_\p{L}]*)$/u', $quote_data[2]) )
+    $keywords[] = $quote_data[2];
+
+if(date('D') == 'Sat')
+{
+    $keywords[] = 'chamedi';
+    $keywords[] = 'caturday';
+    $keywords[] = 'fedicats';
+    $keywords[] = 'catsofpixelfed';
+    $keywords[] = 'catsofmastodon';
+}
+
 
 $search_results = $app->search([
     'keywords'=> $keywords,

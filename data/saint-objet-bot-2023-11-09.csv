@@ -1,5 +1,5 @@
 month,day,singular,plural,genre
-1,1,veisalgie,veisalgies,f
+1,1,rétroviseur,rétroviseurs,m
 1,2,ankylostome,ankylostomes,m
 1,3,apex,apexes,m
 1,4,arlequin,arlequins,m
@@ -283,7 +283,7 @@ month,day,singular,plural,genre
 10,8,spectroscope,spectroscopes,m
 10,9,sac à bière,sacs à bière,m
 10,10,ohmmètre,ohmmètres,m
-10,11,ampermètre,ampermètres,m
+10,11,ampèremètre,ampèremètres,m
 10,12,voltmètre,voltmètres,m
 10,13,oscilloscope,oscilloscopes,m
 10,14,fréquencemètre,fréquencemètres,m
@@ -306,9 +306,9 @@ month,day,singular,plural,genre
 10,31,moins que rien,moins que rien,m
 11,1,tour eiffel,tours eiffel,f
 11,2,symptôme,symptômes,m
-11,3,mamanite,amanites,f
+11,3,amanite,amanites,f
 11,4,cornichon,cornichons,m
-11,5,zinzolin,zinzolins,m
+11,5,escarpolette,escarpolettes,m
 11,6,jouet à bascule,jouets à bascule,m
 11,7,bloc-notes,blocs-notes,m
 11,8,routoir,routoirs,m
@@ -332,7 +332,7 @@ month,day,singular,plural,genre
 11,26,ichcahuipilli,ichcahuipillis,f
 11,27,journal intime,journaux intimes,m
 11,28,harpe celtique,harpes celtiques,f
-11,29,nœud d’agui,nœuds d’agui,m
+11,29,noeud d’agui,noeuds d’agui,m
 11,30,cabotière,cabotières,f
 12,1,pique-oeuf,pique-oeufs,m
 12,2,revue de contrat,revues de contrats,f
