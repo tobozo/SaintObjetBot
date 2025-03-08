@@ -89,7 +89,6 @@ class BlueskyApi
     $this->session_file   = $session_file = $this->cache_dir.'/session.json';
     $this->ratelimit_file = $ratelimit_file = $this->cache_dir.'/ratelimit.json';
 
-
     $reset = $this->isRateLimited();
 
     if( $reset>0 )
@@ -472,7 +471,245 @@ class BlueskyApi
 
     return $ret;
   }
-}
+
+
+  public function fetchNotifications($cache_notifs_dir="cache/bluesky/notifications", $limit_per_query=100, $max_results=0)
+  {
+      $cursor = null;
+      $zero_count = ['count'=>0];
+
+      $notifications = [
+          'follow'  => [],
+          'like'    => [],
+          'quote'   => [],
+          'reply'   => [],
+          'repost'  => [],
+          'mention' => [],
+          'starterpack-joined' => [],
+      ];
+
+      // echo "Fetching last notifications (limit per query=$limit_per_query)".PHP_EOL;
+
+      $total_items = 0;
+
+      for(;;)
+      {
+          $resp = $this->request('GET', 'app.bsky.notification.listNotifications', [
+              'limit'  => $limit_per_query,
+              // 'priority' => Boolean, // true = only receive reply and quote notifications from users followed by the bot
+              // 'seenAt' => DateTime(),
+              'cursor' => $cursor
+          ]);
+
+          if( empty($resp['notifications']) )
+          {
+              //echo "No more results".PHP_EOL;
+              break;
+          }
+
+
+
+          foreach( $resp['notifications'] as $notification )
+          {
+              $date_ary = date_parse($notification['indexedAt']);
+              $date_path = sprintf("%04d/%02d/%02d/%s", $date_ary['year'], $date_ary['month'], $date_ary['day'], $notification['reason'] );
+              $date_dir = $cache_notifs_dir.'/'.$date_path;
+
+              if( !is_dir($date_dir) )
+                  mkdir($date_dir, 0777, true) or php_die("Unable to create dir $date_dir".PHP_EOL);
+
+              // cache/bluesky/notifications/YYYY-MM-DD/HHhMMmSSs.json
+              $notif_filename = sprintf("%s/%02dh%02dm%02ds.json", $date_dir, $date_ary['hour'], $date_ary['minute'], $date_ary['second'] );
+
+              saveJSON($notif_filename, $notification) or php_die("Unable to save notification".PHP_EOL);
+
+              $notifications[$notification['reason']][] = $notification;
+              $total_items++;
+
+              if($max_results>0 && $total_items>=$max_results)
+                  return $notifications;
+          }
+
+          //echo sprintf("+%d=%d, cursor: %s -> %s", count($resp['notifications']), $total_items, $cursor?$cursor:'initial', $resp['cursor']).PHP_EOL;
+
+          if(!isset($resp['cursor']) )
+          {
+              //echo "No more cursor".PHP_EOL;
+              break;
+          }
+
+          if( $cursor == $resp['cursor'] )
+          {
+              //echo "No new cursor".PHP_EOL;
+              break;
+          }
+
+          $cursor = $resp['cursor'];
+      }
+
+      return $notifications;
+  }
+
+
+  public function fetchPostsFromMe($cache_posts_dir='cache/bluesky/posts', $sort='latest', $limit_per_query=100)
+  {
+      //echo "Fetching Posts 'from:me' (sort=$sort, limit per query=$limit_per_query)".PHP_EOL;
+
+      $cursor = null;
+      $posts = [];
+
+      for(;;)
+      {
+          $resp = $this->request('GET', 'app.bsky.feed.searchPosts', ['q'=>'from:me', 'sort'=>$sort, 'limit'=>$limit_per_query, 'cursor' => $cursor ] );
+
+          if( !$resp || isset( $resp['curl_error_code'] ) || !isset($resp['posts']) )
+          {
+              print_r($resp);
+              php_die("... Search failed:".PHP_EOL);
+          }
+
+          if( empty($resp['posts']) )
+          {
+              //echo "No more results".PHP_EOL;
+              break;
+          }
+
+          foreach( $resp['posts'] as $item )
+          {
+              $post = [
+                  'text'        => $item['record']['text'],
+                  'createdAt'   => $item['record']['createdAt'],
+                  'cid'         => $item['cid'],
+                  'uri'         => $item['uri'],
+                  'replyCount'  => $item['replyCount'],
+                  'repostCount' => $item['repostCount'],
+                  'likeCount'   => $item['likeCount'],
+                  'quoteCount'  => $item['quoteCount'],
+              ];
+
+              $date_ary = date_parse($post['createdAt']);
+              $date_path = sprintf("%04d/%02d/%02d", $date_ary['year'], $date_ary['month'], $date_ary['day'] );
+              $date_dir = $cache_posts_dir.'/'.$date_path;
+
+              if( !is_dir($date_dir) )
+                  mkdir($date_dir, 0777, true) or php_die("Unable to create dir $date_dir".PHP_EOL);
+
+              // cache/bluesky/posts/YYYY-MM-DD/HHhMMmSSs.json
+              $post_filename = sprintf("%s/%02dh%02dm%02ds.json", $date_dir, $date_ary['hour'], $date_ary['minute'], $date_ary['second'] );
+
+              saveJSON($post_filename, $post) or php_die("Unable to save post".PHP_EOL);
+
+              $posts[] = $post;
+          }
+
+          //echo sprintf("+%d=%d, cursor: %s -> %s", count($resp['posts']), count($posts), $cursor?$cursor:'initial', $resp['cursor']).PHP_EOL;
+
+          if(!isset($resp['cursor']) )
+          {
+              //echo "No more cursor".PHP_EOL;
+              break;
+          }
+
+          if( $cursor == $resp['cursor'] )
+          {
+              //echo "No new cursor".PHP_EOL;
+              break;
+          }
+
+          $cursor = $resp['cursor'];
+      }
+
+      return $posts;
+  }
+
+
+
+  public function fetchRecords($cache_posts_dir='cache/bluesky/posts', $limit_per_query=100)
+  {
+      $cursor = null;
+      $posts = [];
+
+      //echo "Fetching records (limit per query=$limit_per_query)".PHP_EOL;
+
+      for(;;)
+      {
+          $resp = $this->request('GET', 'com.atproto.repo.listRecords', [
+              'repo'       => $this->getSession()['handle'],
+              'collection' => 'app.bsky.feed.post',
+              'limit'      => $limit_per_query,
+              // 'reverse' => Boolean, // Flag to reverse the order of the returned records
+              'cursor'     => $cursor
+          ]);
+
+          if( empty($resp['records']) )
+          {
+              //echo "No more results".PHP_EOL;
+              break;
+          }
+
+          foreach( $resp['records'] as $record )
+          {
+              $post = $record['value'];
+              $post['cid'] = $record['cid'];
+              $post['uri'] = $record['uri'];
+              unset($post['type']);
+
+              $date_ary = date_parse($post['createdAt']);
+              $date_path = sprintf("%04d/%02d/%02d", $date_ary['year'], $date_ary['month'], $date_ary['day'] );
+              $date_dir = $cache_posts_dir.'/'.$date_path;
+
+              if( !is_dir($date_dir) )
+                  mkdir($date_dir, 0777, true) or php_die("Unable to create dir $date_dir".PHP_EOL);
+
+              // cache/bluesky/posts/record-YYYY-MM-DD/HHhMMmSSs.json
+              $record_filename = sprintf("%s/record-%02dh%02dm%02ds.json", $date_dir, $date_ary['hour'], $date_ary['minute'], $date_ary['second'] );
+
+              saveJSON($record_filename, $record) or php_die("Unable to save post".PHP_EOL);
+
+              $posts[] = $post;
+          }
+
+          //echo sprintf("+%d=%d, cursor: %s -> %s", count($resp['records']), count($posts), $cursor?$cursor:'initial', $resp['cursor']).PHP_EOL;
+
+          if(!isset($resp['cursor']) )
+          {
+              //echo "No more cursor".PHP_EOL;
+              break;
+          }
+
+          if( $cursor == $resp['cursor'] )
+          {
+              //echo "No new cursor".PHP_EOL;
+              break;
+          }
+
+          $cursor = $resp['cursor'];
+      }
+
+      return $posts;
+  }
+
+
+
+  public function fetchProfile( $author_ary, $die_on_fail=true )
+  {
+      $res = $this->request('GET', 'app.bsky.actor.getProfile', ['actor' => $author_ary['handle']]);
+      if( !$res || isset( $res['curl_error_code'] ) || !isset($res['handle']) )
+      {
+          if( $die_on_fail )
+          {
+            print_r($res);
+            php_die("... Failed to fetch profile for ".$author_ary['handle'].PHP_EOL);
+          }
+          else
+            return $author_ary;
+      }
+      //echo "Fetched profile for ".$author_ary['handle'].PHP_EOL;
+      return $res;
+  }
+
+
+} // end class BlueskyApi
 
 
 
@@ -600,7 +837,6 @@ class BlueSkyStatus
       php_die("Unable to fetch last 10 posts");
     }
 
-
     $deleteCount = 0;
 
     foreach( $last_10_posts['feed'] as $pos => $item )
@@ -631,6 +867,7 @@ class BlueSkyStatus
       'title'       => $info_card['og_title'],
       'description' => $info_card['og_description']
     ];
+
     $img_url = $info_card['og_image'];
 
     if( $img_url )
@@ -642,7 +879,7 @@ class BlueSkyStatus
 
       if(! file_exists( $img_path ) )
       {
-        // dirty fix: github gives 429 (toot many requests) if the download is made too early after fetching the og: tags
+        // dirty fix: some hosts like github give 429 (toot many requests) if the download is made too early after fetching the og: tags
         $blobImage = file_get_contents_exp_backoff( $img_url ) or php_die("Unable to fetch og:image at url $url".PHP_EOL);
         // TODO: use a more stubborn method for fetching the og:image
         file_put_contents($img_path, $blobImage ) or php_die("Unable to save og:image at url $url".PHP_EOL);

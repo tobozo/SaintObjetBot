@@ -450,7 +450,7 @@ function getLastDayOfMonth( int $month, int $year) : int
 
 
 
-function imagecopymerge_alpha(GdImage $dst_im, GdImage $src_im, int $dst_x, int $dst_y, int $src_x, int $src_y, int $src_w, int $src_h, int $pct)
+function imagecopymerge_alpha($dst_im, $src_im, int $dst_x, int $dst_y, int $src_x, int $src_y, int $src_w, int $src_h, int $pct)
 {
     // creating a cut resource
     $cut = imagecreatetruecolor($src_w, $src_h);
@@ -463,7 +463,7 @@ function imagecopymerge_alpha(GdImage $dst_im, GdImage $src_im, int $dst_x, int 
 }
 
 
-function imageresize_alpha(GdImage $image, int $newWidth, int $newHeight) : GDImage
+function imageresize_alpha($image, int $newWidth, int $newHeight)
 {
     $newImg = imagecreatetruecolor($newWidth, $newHeight);
     imagealphablending($newImg, false);
@@ -476,7 +476,7 @@ function imageresize_alpha(GdImage $image, int $newWidth, int $newHeight) : GDIm
     return $newImg;
 }
 
-function imagefilledroundrectangle(GdImage &$im, int $x1, int $y1, int $x2, int $y2, float $radius, int $color)
+function imagefilledroundrectangle(&$im, int $x1, int $y1, int $x2, int $y2, float $radius, int $color)
 {
     // draw rectangle without corners
     imagefilledrectangle($im, $x1+$radius, $y1, $x2-$radius, $y2, $color);
@@ -489,7 +489,7 @@ function imagefilledroundrectangle(GdImage &$im, int $x1, int $y1, int $x2, int 
 }
 
 
-function imagettfstroketext(GdImage &$image, int $size, int $angle, int $x, int $y, int &$textcolor, int &$strokecolor, string $fontfile, string $text, int $px) : array
+function imagettfstroketext(&$image, int $size, int $angle, int $x, int $y, int &$textcolor, int &$strokecolor, string $fontfile, string $text, int $px) : array
 {
     for($c1 = ($x-abs($px)); $c1 <= ($x+abs($px)); $c1++)
         for($c2 = ($y-abs($px)); $c2 <= ($y+abs($px)); $c2++)

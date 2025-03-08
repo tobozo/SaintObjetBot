@@ -200,7 +200,7 @@ class MastodonAPI
 
 
   // follow link[rel=next] from paginated query, return results
-  public function consumeQuery( $linkRelNext, $what=NULL, $method="GET", $args=[], $sleep=5 ) : array
+  public function consumeQuery( $linkRelNext, $what=NULL, $method="GET", $args=[], $max_results=0 ) : array
   {
     $ret = [];
 
@@ -223,10 +223,12 @@ class MastodonAPI
           $ret[] = $item[$what];
         else
           $ret[] = $item;
+        if($max_results>0 && count($ret)>=$max_results)
+          return $ret;
       }
 
       $linkRelNext = $this->getNextPage();
-      echo ".";
+      //echo ".";
       //sleep($sleep);
     }
 

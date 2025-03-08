@@ -9,8 +9,12 @@ if( !isset( $env["MASTODON_API_TOKEN"] ) || !isset( $env["MASTODON_API_SERVER"] 
     php_die("Missing credentials for mastodon, check your env file!".PHP_EOL );
 }
 
-$mastodon = new SocialPlatform\MastodonAPI( $env["MASTODON_API_TOKEN"], $env["MASTODON_API_SERVER"] );
-$stats    = new SocialPlatform\MastodonStats($mastodon);
+
+php_log(PHP_EOL.PHP_EOL."************* Mastodon Analytics ********************".PHP_EOL.PHP_EOL);
+
+
+$api   = new SocialPlatform\MastodonAPI( $env["MASTODON_API_TOKEN"], $env["MASTODON_API_SERVER"] );
+$stats = new SocialPlatform\MastodonStats($api);
 
 if( isset($argv[1]) && $argv[1] == "update" )
 {
@@ -20,13 +24,14 @@ if( isset($argv[1]) && $argv[1] == "update" )
     $stats->updateNotifications();
 }
 
-$stats->genStats();
+$stats->genStats(true);
 // print some stats to the console
 $stats->printRebloggers( 10 );
 $stats->printReach( 10 );
 $stats->printEngagement( 10 );
 $stats->printReblogs( 10 );
 $stats->printFavourites( 10 );
+$stats->printHallOfShame();
 $stats->printReplies( 10 );
 $stats->printRepliers( 10 );
 // plot some stats using gnuplot

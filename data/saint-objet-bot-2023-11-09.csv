@@ -1,9 +1,9 @@
 month,day,singular,plural,genre
-1,1,rétroviseur,rétroviseurs,m
+1,1,raboteuse,raboteuses,f
 1,2,ankylostome,ankylostomes,m
-1,3,apex,apexes,m
+1,3,vermifuge,vermifuges,m
 1,4,arlequin,arlequins,m
-1,5,bengali,bengalis,m
+1,5,palpeur de mirette,palpeurs de mirettes,m
 1,6,bouquetin,bouquetins,m
 1,7,cancrelat,cancrelats,m
 1,8,cerf-volant,cerfs-volants,m
@@ -63,17 +63,17 @@ month,day,singular,plural,genre
 3,2,tournebille,tournebilles,f
 3,3,gibelotte,gibelottes,f
 3,4,cabestan,cabestans,m
-3,5,mélopée,mélodées,f
+3,5,mélopée,mélopées,f
 3,6,galurin,galurins,m
-3,7,joug,jougs,m
-3,8,cabriole,cabrioles,f
-3,9,attache parisienne,attaches parisiennes,f
-3,10,bac à charbon,bacs à charbon,m
-3,11,béquille,béquilles,f
-3,12,boussole,boussoles,f
-3,13,caméra argentique,caméras argentiques,f
-3,14,canne,cannes,f
-3,15,cloche,cloches,f
+3,7,compte-goutte,compte-gouttes,m
+3,8,tabouret de piano,tabourets de piano,m
+3,9,pot de moutarde,pots de moutarde,m
+3,10,laisse de chien,laisses de chien,f
+3,11,pare-choc,pare-chocs,m
+3,12,papier-carbone,papiers carbone,m
+3,13,bulle de savon,bulles de savon,f
+3,14,équilibre,équilibres,m
+3,15,essuie-glace,essuie-glaces,m
 3,16,clou,clous,m
 3,17,coton-tige,cotons-tiges,m
 3,18,disque vinyle,disques vinyles,m
@@ -85,7 +85,7 @@ month,day,singular,plural,genre
 3,24,tendu-de-majeur,doigts d'honneur,m
 3,25,machine à écrire,machines à écrire,f
 3,26,poignée de porte,poignées de porte,f
-3,27,savon de marseille,savons de marseille,m
+3,27,savonnette,savonnettes,f
 3,28,stylo à plume,stylos à plume,m
 3,29,téléviseur cathodique,téléviseurs cathodiques,m
 3,30,urne funéraire,urnes funéraires,f
@@ -350,18 +350,18 @@ month,day,singular,plural,genre
 12,14,boulevard circulaire,boulevards circulaires,m
 12,15,bande cyclable,bandes cyclables,f
 12,16,coupe-boulons,coupe-boulons,m
-12,17,clé à pipe,clés à pipes,f
-12,18,ensacheuse,ensacheuses,f
-12,19,fulguromètre,fulguromètre,m
+12,17,clé à pipe,clés à pipe,f
+12,18,zeugme,zeugmes,m
+12,19,tricordeur à ampoules sous vide,tricordeurs à ampoules sous vide,m
 12,20,diptyque,diptyques,m
-12,21,cucurbitacée,cucurbitacées,m
+12,21,clavette basculante,clavettes basculantes,f
 12,22,glassophone,glassophones,m
 12,23,métaphore,métaphores,f
 12,24,pentécontère,pentécontères,m
-12,25,prépuce,prépuces,m
+12,25,sapin à trois roues,sapins à trois roues,m
 12,26,cumulus bourgeonnant,cumulus bourgeonnants,m
 12,27,pyréolophore,pyréolophores,m
 12,28,soubassophone,soubassophones,m
-12,29,béret basque,bérets basques,m
-12,30,vocifération sportive,vociférations sportives,m
-12,31,armoire à glace,armoires à glace,f
+12,29,vastringue,vastringues,m
+12,30,vocifération sportive,vociférations sportives,f
+12,31,connotation de proximité temporelle,connotations de proximité temporelle,f

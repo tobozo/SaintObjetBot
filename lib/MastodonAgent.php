@@ -8,7 +8,7 @@ require_once("Mastodon.php");
 
 class MastodonAgent
 {
-    private $mastodon;
+    public $mastodon;
     //private $logger;
 
     private $ignoredAccounts = [];
@@ -28,6 +28,8 @@ class MastodonAgent
     private $followersFile;
     private $mentionsFile;
 
+    private $me;
+
     public function __construct($env)
     {
         //$this->logger   = new \LogManager\FileLogger( ENV_DIR );
@@ -42,9 +44,16 @@ class MastodonAgent
         $this->followersFile       = $this->cache_dir.'/followers.json';
         $this->mentionsFile        = $this->cache_dir.'/mentions.json';
 
+        $this->me = $this->mastodon->getAccount();
+
     }
 
-    public function querySince( $linkRelNext, $cache_file, $what=NULL, $max_age=86400, $method="GET", $args=[] )
+    public function getAccount()
+    {
+        return $this->me;
+    }
+
+    public function querySince( $linkRelNext, $cache_file, $what=NULL, $max_age=86400, $method="GET", $args=[], $max_results=0 )
     {
         $ret = [];
         $cached = [];
@@ -57,13 +66,14 @@ class MastodonAgent
             {
                 // TODO: iterate $cached to find the highest id
                 $since_id = $cached[0]['id'];
-                $linkRelNext .= '&since_id='.$since_id;
+                // $linkRelNext .= '&since_id='.$since_id;
+                $linkRelNext .= '&min_id='.$since_id;
             }
         }
 
-        echo "Querying $linkRelNext ".PHP_EOL;
+        php_logd("Querying $linkRelNext ".PHP_EOL);
 
-        $ret = $this->mastodon->consumeQuery( $linkRelNext, $what, $method, $args, 5 );
+        $ret = $this->mastodon->consumeQuery( $linkRelNext, $what, $method, $args, $max_results );
 
         if( !empty($cached) )
         {
@@ -72,7 +82,7 @@ class MastodonAgent
                     $ret[] = $item;
         }
 
-        echo PHP_EOL;
+        //echo PHP_EOL;
 
         file_put_contents($cache_file, json_encode($ret/*, JSON_PRETTY_PRINT*/));
 
@@ -144,6 +154,19 @@ class MastodonAgent
     }
 
 
+    public function getFavourites($cache_max_age=86400)
+    {
+        $favourites = $this->querySince('/api/v1/favourites?limit=40', $this->favouritesFile, NULL, $cache_max_age);
+        foreach( $favourites as $fav )
+        {
+            $this->favourites[] = $fav['id'];
+            if(!in_array($fav['account']['acct'], $this->ignoredAccounts))
+                $this->ignoredAccounts[] = $fav['account']['acct'];
+        }
+        return $this->favourites;
+    }
+
+
 
 
     public function search( $arr )
@@ -169,7 +192,7 @@ class MastodonAgent
         $search_args = []; // array indexed by keyword, search args
         $keywords    = $arr['keywords'];
 
-        $followers_query_url = '/api/v1/accounts/'.$this->mastodon->getAccount()['id'].'/followers?limit=80';
+        $followers_query_url = '/api/v1/accounts/'.$this->me['id'].'/followers?limit=80';
         $followers = $this->querySince($followers_query_url, $this->followersFile);
         foreach($followers as $follower)
         {
@@ -177,14 +200,17 @@ class MastodonAgent
                 $this->ignoredAccounts[] = $follower['acct'];
         }
 
-        $this->favourites = [];
-        $favourites = $this->querySince('/api/v1/favourites?limit=40', $this->favouritesFile);
-        foreach( $favourites as $fav )
-        {
-            $this->favourites[] = $fav['id'];
-            if(!in_array($fav['account']['acct'], $this->ignoredAccounts))
-                $this->ignoredAccounts[] = $fav['account']['acct'];
-        }
+
+        $this->getFavourites();
+
+        // $this->favourites = [];
+        // $favourites = $this->querySince('/api/v1/favourites?limit=40', $this->favouritesFile);
+        // foreach( $favourites as $fav )
+        // {
+        //     $this->favourites[] = $fav['id'];
+        //     if(!in_array($fav['account']['acct'], $this->ignoredAccounts))
+        //         $this->ignoredAccounts[] = $fav['account']['acct'];
+        // }
 
         $this->mentions = $this->getMentions();
 
@@ -201,7 +227,7 @@ class MastodonAgent
         }
 
 
-        echo sprintf("Loaded entries: %d favourites, %d ignoredAccounts, %d ignoredStatuses, %d mentions".PHP_EOL."Using maxCount=%d, maxAge=%d (%s)".PHP_EOL,
+        php_logd(sprintf("Loaded entries: %d favourites, %d ignoredAccounts, %d ignoredStatuses, %d mentions".PHP_EOL."Using maxCount=%d, maxAge=%d (%s)".PHP_EOL,
             count($this->favourites),
             count($this->ignoredAccounts),
             count($this->ignoredStatuses),
@@ -209,7 +235,7 @@ class MastodonAgent
             $arr['maxCount'],
             $arr['maxAge'],
             $this->convertSecToTime($arr['maxAge'])
-        );
+        ));
 
         $totalStatuses = 0;
         $search_args = $arr;
@@ -252,13 +278,12 @@ class MastodonAgent
             $totalStatuses += count($statuses[$keyword]);
         }
 
-
-        echo sprintf("Collected %d statuses (%d accounts, %d shared statuses, %d self posts".PHP_EOL,
+        php_logd(sprintf("Collected %d statuses (%d accounts, %d shared statuses, %d self posts".PHP_EOL,
             $totalStatuses,
             $this->ignoredAccountsCount,
             $this->ignoredStatusesCount,
             $this->ignoredSelfCount
-        );
+        ));
 
         return [ 'statuses' => $statuses, 'search_args' => $search_args ];
     }
@@ -295,7 +320,7 @@ class MastodonAgent
         $max_count = $arr['maxCount'];
         $max_age   = $arr['maxAge'];
 
-        echo PHP_EOL."Searching #$keyword ";
+        php_logd("Searching #$keyword ");
         $args = [
             'q'      => urlencode($keyword),
             'type'   => 'hashtags',
@@ -326,7 +351,7 @@ class MastodonAgent
             $toots = $this->mastodon->callAPI( $linkRelNext, 'GET', []);
 
             if( isset( $toots['curl_error'] ) || isset( $toots['error'] ) || isset($toots['json_error']) )
-                php_die("An API request to $linkRelNext failed after collecting ".count($this->toots)." record(s)".PHP_EOL);
+                php_die("An API request to $linkRelNext failed after collecting ".count($statuses)." record(s)".PHP_EOL);
 
             if( empty($toots) )
                 break;
@@ -338,7 +363,7 @@ class MastodonAgent
 
                 if( $status['language'] != 'fr' )
                 {
-                    echo "x";
+                    php_logd("x");
                     continue;
                 }
 
@@ -346,43 +371,45 @@ class MastodonAgent
 
                 if( $status_age < $oldest_age )
                 {
-                    echo "O".PHP_EOL;
+                    //echo "O".PHP_EOL;
+                    php_logd("\n");
                     return [ 'statuses' => $statuses, 'search_args' => $args ];;
                 }
 
                 if(count($statuses)>=$max_count)
                 {
-                    echo "M".PHP_EOL;
+                    //echo "M".PHP_EOL;
+                    php_logd("\n");
                     return [ 'statuses' => $statuses, 'search_args' => $args ];;
                 }
 
-                if( $status['account']['id'] == $this->mastodon->getAccount()['id'] )
+                if( $status['account']['id'] == $this->me['id'] )
                 {
-                    echo "i";
+                    php_logd("i");
                     $this->ignoredSelfCount++;
                     continue; // ignore self
                 }
 
                 if( in_array($status['id'], $this->favourites ) )
                 {
-                    echo "*";
+                    php_logd("*");
                     continue;
                 }
 
                 if(in_array($status['account']['acct'], $this->ignoredAccounts ) )
                 {
-                    echo "a";
+                    php_logd("a");
                     $this->ignoredAccountsCount++;
                     continue; // ignore posts from followers and previous ignore list
                 }
                 if( in_array($status['id'], $this->ignoredStatuses ) )
                 {
-                    echo "d";
+                    php_logd("d");
                     $this->ignoredStatusesCount++;
                     continue; // ignore statuses from other keyword searches
                 }
 
-                echo ".";
+                php_logd(".");
                 //echo sprintf("[%s] %s : %s".PHP_EOL, $keyword, $status['account']['acct'], html_entity_decode(strip_tags($status['content']), ENT_QUOTES | ENT_HTML5, 'UTF-8') );
                 $statuses[] = $status;
                 $this->ignoredStatuses[] = $status['id'];
@@ -392,7 +419,7 @@ class MastodonAgent
             $linkRelNext = $this->mastodon->getNextPage();
         }
 
-        echo PHP_EOL;
+        php_logd("\n");
         return [ 'statuses' => $statuses, 'search_args' => $args ];
     }
 
@@ -471,7 +498,7 @@ class MastodonAgent
                     return [ 'statuses' => $statuses, 'search_args' => $args ];;
                 }
 
-                if( $status['account']['id'] == $this->mastodon->getAccount()['id'] )
+                if( $status['account']['id'] == $this->me['id'] )
                 {
                     echo "i";
                     $this->ignoredSelfCount++;
@@ -556,7 +583,7 @@ class MastodonAgent
                         file_put_contents($this->ignoredStatusesFile, json_encode($this->ignoredStatuses, JSON_PRETTY_PRINT));
                     }
 
-                    if(!in_array($status['account']['acct'], $this->ignoredAccounts) && $status['account']['id'] != $this->mastodon->getAccount()['id'] )
+                    if(!in_array($status['account']['acct'], $this->ignoredAccounts) && $status['account']['id'] != $this->me['id'] )
                     {
                         $this->ignoredAccounts[] = $status['account']['acct'];
                         file_put_contents($this->ignoredAccountsFile, json_encode($this->ignoredAccounts, JSON_PRETTY_PRINT));
@@ -567,8 +594,11 @@ class MastodonAgent
                     else
                         $meta['max_id'] = min($ids);
 
-                    $meta['offset'] = $search_args[$keyword]['offset'];
-                    $meta['limit']  = $search_args[$keyword]['limit'];
+                    if( isset($search_args[$keyword]))
+                    {
+                        $meta['offset'] = $search_args[$keyword]['offset'];
+                        $meta['limit']  = $search_args[$keyword]['limit'];
+                    }
 
                     $this->saveKeywordFile($keyword, $meta);
 
@@ -585,7 +615,7 @@ class MastodonAgent
         file_put_contents($this->ignoredStatusesFile, json_encode($this->ignoredStatuses, JSON_PRETTY_PRINT));
         file_put_contents($this->ignoredAccountsFile, json_encode($this->ignoredAccounts, JSON_PRETTY_PRINT));
 
-        echo sprintf("Processing %d mentions".PHP_EOL, count($this->mentions) );
+        php_logd(sprintf("Processing %d mentions".PHP_EOL, count($this->mentions) ));
 
         foreach($this->mentions as $status)
         {
@@ -604,7 +634,7 @@ class MastodonAgent
 
                 if(isset($fav['favourited']) && $fav['favourited']=='true')
                 {
-                    echo "Favourited Mention ".$status['url'].PHP_EOL;
+                    echo "[Mastodon] Favourited Mention ".$status['url'].PHP_EOL;
                     $this->ignoredStatuses[] = $status['id'];
                 }
             }

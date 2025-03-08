@@ -10,10 +10,13 @@ require_once("BlueSky.php");
 class BlueskyAgent
 {
     private $cache_dir = 'cache/bluesky/search';
-    private $api = NULL;
+    public $api = NULL;
     private $keyword = NULL;
 
     private $followers_file; // = $this->cache_dir.'/bluesky.followers.json';
+
+    // TODO: harmonize this with value from BlueSkyAnalytics->notifs_history_json
+    private $notifs_history_json = 'cache/bluesky/notifications//notifs.json';
 
 
     public function __construct($env)
@@ -21,8 +24,12 @@ class BlueskyAgent
         if( isset($env['INDEX_CACHE_DIR']) )
             $this->cache_dir = $env['INDEX_CACHE_DIR'];
         $this->api = new \SocialPlatform\BlueskyApi($env["BSKY_API_APP_USER"], $env["BSKY_API_APP_TOKEN"], $this->cache_dir);
-        if( ! $this->api->getAccountDid() ) php_die('Unable to get account id'.PHP_EOL);
-        if( ! is_dir($this->cache_dir)) mkdir($this->cache_dir, 0777, true) or php_die('Unable to create cache dir'.PHP_EOL);
+
+        if( ! $this->api->getAccountDid() )
+            php_die('Unable to get account id'.PHP_EOL);
+        if( ! is_dir($this->cache_dir))
+            mkdir($this->cache_dir, 0777, true) or php_die('Unable to create cache dir'.PHP_EOL);
+
         $this->followers_file = $this->cache_dir.'/bluesky.followers.json';
     }
 
@@ -31,12 +38,13 @@ class BlueskyAgent
     {
         foreach( $search_results as $keyword => $posts_to_like )
         {
-            echo sprintf("Keyword %s has %d likes to perform".PHP_EOL, $keyword, count($posts_to_like));
+            if( count($posts_to_like) > 0 )
+                php_logln(sprintf("[Bluesky] Keyword %s has %d likes to perform", $keyword, count($posts_to_like)));
             foreach($posts_to_like as $post)
             {
                 $uriParts = explode('/', $post['uri']);
                 $url = sprintf("https://bsky.app/profile/%s/post/%s", $post['author']['handle'], end($uriParts) );
-                echo "Liking url ... $url".PHP_EOL;
+                php_logln("[Bluesky] Liking url ... $url");
                 $res = $this->likePost( $post );
             }
         }
@@ -117,7 +125,7 @@ class BlueskyAgent
 
             if( empty($resp['followers'])  )
             {
-                echo "No more results".PHP_EOL;
+                //echo "No more results".PHP_EOL;
                 break;
             }
 
@@ -133,7 +141,7 @@ class BlueskyAgent
                 $dids[$follower['did']] = true;
             }
 
-            echo sprintf("Added %d/%d followers, cursor: %s", $added, count($resp['followers']), $cursor?$cursor:'initial').PHP_EOL;
+            //echo sprintf("Added %d/%d followers, cursor: %s", $added, count($resp['followers']), $cursor?$cursor:'initial').PHP_EOL;
 
 
             if(!isset($resp['cursor']) )
@@ -144,7 +152,7 @@ class BlueskyAgent
 
             if( $cursor == $resp['cursor'] )
             {
-                echo "No new cursor".PHP_EOL;
+                //echo "No new cursor".PHP_EOL;
                 break;
             }
 
@@ -238,7 +246,8 @@ class BlueskyAgent
         // for debug
         file_put_contents( $this->cache_dir.'/'.$keyword.'.json', json_encode( $posts, JSON_PRETTY_PRINT ) ) or php_die("Unable to save JSON".PHP_EOL);
 
-        echo sprintf("Search for '%s' returned %d results".PHP_EOL, $keyword, count($posts['posts']) );
+        // if( count($posts['posts']) > 0 )
+        //    echo sprintf("Search for '%s' returned %d results".PHP_EOL, $keyword, count($posts['posts']) );
 
         $posts_to_like = [];
 
@@ -250,7 +259,7 @@ class BlueskyAgent
         {
             if( in_array($post['author']['handle'], $ignoredHandles) )
             {
-                echo "Ignoring post from ".$post['author']['handle'].PHP_EOL;
+                // echo "Ignoring post from ".$post['author']['handle'].PHP_EOL;
                 continue; // ignore posts by me or blacklisted accounts
             }
 
@@ -269,14 +278,14 @@ class BlueskyAgent
 
             if( file_exists($needs_like_filename) )
             {
-                echo sprintf("[#$num] This cached post has %d likes but wasn't liked by me: %s".PHP_EOL, $post['likeCount'], $url);
+                // echo sprintf("[#$num] This cached post has %d likes but wasn't liked by me: %s".PHP_EOL, $post['likeCount'], $url);
                 $posts_to_like[] = $post;
                 continue;
             }
 
             if( $post['likeCount'] > 0 )
             {
-                sleep(3);
+                // sleep(3);
 
                 $likes = $this->api->request('GET', 'app.bsky.feed.getLikes', [ 'uri'=>$post['uri'], 'cid'=>$post['cid'] ]);
 
@@ -298,21 +307,21 @@ class BlueskyAgent
 
             if( $needs_like )
             {
-                echo sprintf("[#$num] This post has %d likes but wasn't liked by me: %s".PHP_EOL, $post['likeCount'], $url);
+                // echo sprintf("[#$num] This post has %d likes but wasn't liked by me: %s".PHP_EOL, $post['likeCount'], $url);
                 file_put_contents( $needs_like_filename, json_encode( $likes, JSON_PRETTY_PRINT ) ) or php_die("Unable to save likes cache".PHP_EOL);
                 $posts_to_like[] = $post;
                 $ignoredHandles[] = $post['author']['handle'];
             }
             else
             {
-                echo sprintf("[#$num] This post has %d likes and was liked by me: %s".PHP_EOL, $post['likeCount'], $url);
+                // echo sprintf("[#$num] This post has %d likes and was liked by me: %s".PHP_EOL, $post['likeCount'], $url);
                 file_put_contents( $liked_by_me_filename, json_encode( $likes, JSON_PRETTY_PRINT ) ) or php_die("Unable to save likes cache".PHP_EOL);
             }
 
 
         }
 
-        echo sprintf("Agent found %d posts to like out of %d".PHP_EOL, count($posts_to_like), count($posts['posts']) );
+        // echo sprintf("Bluesky Agent found %d posts to like out of %d".PHP_EOL, count($posts_to_like), count($posts['posts']) );
 
         // for debug
         file_put_contents($this->cache_dir."/$keyword-like-queue.json", json_encode($posts_to_like, JSON_PRETTY_PRINT) ) or php_die("Unable to save likes queue");

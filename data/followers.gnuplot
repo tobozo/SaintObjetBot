@@ -25,7 +25,7 @@ followers_color = "#FF0000"
 # total_reach_color = "#00FF80"
 perf_color = "#cc00cc"
 perf_waterline = 20
-reach_waterline = 5000
+# reach_waterline = 5000
 
 # csv column numbers
 date_col = 1
@@ -47,7 +47,7 @@ stats filename using ($6) nooutput
 set xdata time # the X axis will be date/time data type
 set timefmt '%Y-%m-%d' # how the date/time input must be parsed
 # %b = month abbreviated, %Y = full year, %W = week number
-set format x "%b\n%Y\nW%W" # output format on the X axis
+set format x "%b\nW%W" # output format on the X axis
 
 
 # date utils

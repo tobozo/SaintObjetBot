@@ -26,18 +26,32 @@ class BlueskyStats
     private int $notifs_expire_after  = 86400;
     private int $records_expire_after = 86400;
 
-    private $stats_file_csv;
+    private $stats_file_csv; // csv data store for gnuplot
 
+    private $me; // bot's profile
+
+    // report variables
     private $posts = [];
+    private $posts_by_cid   = [];
+    private $items_by_date  = [/*"created_at", "id", "object", "follows", "followers (total)", "reach", "rank", "reblogs_count", "replies_count", "favourites_count", "followers_avg"*/]; // csv data
+    private $notifs_by_day  = [];
+    private $notifs_by_user = [];
+    private $notifs_count   = [];
+    //private $posts          = [];
+    private $notifications  = [];
+    private $profiles       = [];
+    private $followersCount = 0;
+    private $reach_waterline = 0;
+    private $calendar = [];
 
-    private $max = 10;
-
-    private $posts_per_day = [];
 
 
-    public function __construct($env)
+    public function __construct($env, $calendar)
     {
         $this->api = new \SocialPlatform\BlueskyApi($env["BSKY_API_APP_USER"], $env["BSKY_API_APP_TOKEN"], $this->cache_dir);
+
+        $this->calendar = $calendar;
+
         $this->cache_notifs_dir      = $this->cache_dir.'/notifications';
         $this->cache_posts_dir       = $this->cache_dir.'/posts';
         $this->cache_profiles_dir    = $this->cache_dir.'/profiles';
@@ -57,19 +71,339 @@ class BlueskyStats
 
         if( ! $this->api->getAccountDid() )
             php_die('Unable to get account id'.PHP_EOL);
+
+        $this->me = $this->api->fetchProfile(['handle' => $this->api->getAccountDid() ]);
+        $this->me['followersCount'];// => 365
+        $this->me['followsCount'];// => 1
+        $this->me['postsCount'];// => 397
     }
 
 
-    public function fetchProfile( $author_ary )
+    public function run()
     {
-        $res = $this->api->request('GET', 'app.bsky.actor.getProfile', ['actor' => $author_ary['handle']]);
-        if( !$res || isset( $res['curl_error_code'] ) || !isset($res['handle']) )
+        $this->updateCache();
+
+        $this->calcNotifications();
+        $this->calcFollowers();
+        $this->calcRank();
+    }
+
+
+    public function updateCache()
+    {
+        $this->posts         = $this->getPostsFromMe();
+        $this->notifications = $this->getNotifications();
+        $this->profiles      = $this->getProfiles();
+
+        $this->updateNotifications();
+        $this->updatePosts();
+    }
+
+
+    public function updateNotifications()
+    {
+        if( empty($this->notifications) )
         {
-            print_r($res);
-            php_die("... Failed to fetch profile for ".$author_ary['handle'].PHP_EOL);
+            php_die("updateNotifications(): nothing to do".PHP_EOL);
         }
-        echo "Fetched profile for ".$author_ary['handle'].PHP_EOL;
-        return $res;
+
+        $this->notifs_count = array_keys($this->notifications);
+        foreach($this->notifs_count as $idx => $key)
+        {
+            $this->notifs_count[$key] = count($this->notifications[$key]);
+            $this->notifs_by_day[$key] = [];
+            $this->notifs_by_user[$key] = [];
+            unset($this->notifs_count[$idx]);
+        }
+
+        print_r([
+            'posts'    => count($this->posts),
+            //'records'  => count($records),
+            'notifs'   => $this->notifs_count,
+            'profiles' => count($this->profiles),
+
+        ]);
+    }
+
+
+    public function updatePosts()
+    {
+        if( empty($this->posts) )
+        {
+            php_die("updatePosts(): nothing to do".PHP_EOL);
+        }
+
+        foreach( $this->posts as $num => $post )
+        {
+            // filter out replies and manual posts
+            if(!str_starts_with($post['text'], 'Chalut')) // not a SaintObjet post
+            {
+                unset($this->posts[$num]); // this has no effect
+                continue; // not a "Chalut" post, ignore
+            }
+
+            // WARNING: csv file gets often updated, this should extract the SaintObjet from the post instead of the one from the csv
+            $quote_data = getQuoteData(strtotime($post['createdAt']), $this->calendar);
+
+            $date_ary = date_parse($post['createdAt']);
+            $date_sig = sprintf("%04d-%02d-%02d", $date_ary['year'], $date_ary['month'], $date_ary['day'] );
+
+            // overload the array with additional data
+            $post['date_sig'] = $date_sig;
+            $post['object']   = ucwords($quote_data[2]);
+            $post['reach']    = 0;
+            $post['rank']     = 0;
+
+            $this->posts_by_cid[$post['cid']] = $post;
+
+            $this->items_by_date[$date_sig] = [
+                "created_at"       => $date_sig,
+                "id"               => $post['cid'],
+                "object"           => ucwords($quote_data[2]),
+                "follows"          => 0,
+                "followers"        => 0,
+                "reach"            => 0,
+                "rank"             => 0,
+                "reblogs_count"    => $post['repostCount'],
+                "replies_count"    => $post['replyCount'],
+                "favourites_count" => $post['likeCount'],
+                "followers_avg"    => 0
+            ]; // csv data
+
+        }
+
+    }
+
+
+
+    public function calcNotifications()
+    {
+        if( empty($this->notifications) )
+        {
+            php_die("calcNotifications(): nothing to do".PHP_EOL);
+        }
+
+        $reasons = ['follow', 'like', 'quote', 'reply', 'repost', 'mention', 'starterpack-joined'];
+
+        foreach($reasons as $notif_key)
+        {
+            if( !array_key_exists($notif_key, $this->notifications))
+                continue;
+            $items = $this->notifications[$notif_key];
+            foreach($items as $item)
+            {
+                switch($notif_key)
+                {
+                    case 'like'   :
+                    case 'repost' :
+                        if( isset($item['record']['subject']['cid']) )
+                            $cid = $item['record']['subject']['cid'];
+                        else
+                            continue 2; // malformed
+                    break;
+
+                    case 'quote'  :
+                        if(isset($item['record']['embed']['record']['cid']))
+                            $cid = $item['record']['embed']['record']['cid'];
+                        else if(isset($item['record']['embed']['record']['record']['cid']))
+                            $cid = $item['record']['embed']['record']['record']['cid'];
+                        else
+                            continue 2; // quote of a quote of a quote ?
+                    break;
+
+                    case 'reply'  :
+                    case 'mention':
+                        if(isset($item['record']['reply']['root']['cid']))
+                            $cid = $item['record']['reply']['root']['cid'];
+                        else
+                            continue 2; // not directly attached to a tracked post
+                    break;
+                    case 'follow' :
+                        $follow_date = $item['record']['createdAt'];
+                        $date_ary = date_parse($follow_date);
+                        $date_sig = sprintf("%04d-%02d-%02d", $date_ary['year'], $date_ary['month'], $date_ary['day'] );
+                        if(!isset($this->notifs_by_day['follow'][$date_sig]))
+                            $this->notifs_by_day['follow'][$date_sig] = [];
+                        $this->notifs_by_day['follow'][$date_sig][] = $item['author']['handle'];
+                        continue 2;
+                    break;
+                    case 'starterpack-joined' :
+                        echo "TODO: handle '$notif_key'".PHP_EOL;
+                        print_r($item);
+                        // $join_date = $item['record']['createdAt'];
+                        // $date_sig = sprintf("%04d-%02d-%02d", $date_ary['year'], $date_ary['month'], $date_ary['day'] );
+                        // if(!isset($this->notifs_by_day['starterpack-joined'][$date_sig]))
+                        //     $this->notifs_by_day['starterpack-joined'][$date_sig] = [];
+                        // $this->notifs_by_day['starterpack-joined'][$date_sig][] = $item['author']['handle'];
+                        continue 2;
+                    break;
+                    default       :
+                        php_die("WTF".PHP_EOL);
+                }
+
+                if(!array_key_exists($cid, $this->posts_by_cid )) // not related to a tracked post
+                    continue;
+
+                $profile = $this->hydrateAuthor($item['author']);
+
+                $post_date = $this->posts_by_cid[$cid]['createdAt'];
+                $date_ary = date_parse($post_date);
+                $date_sig = sprintf("%04d-%02d-%02d", $date_ary['year'], $date_ary['month'], $date_ary['day'] );
+
+                if( array_key_exists('followersCount', $profile) )
+                    $this->items_by_date[$date_sig]['reach'] += $profile['followersCount'];
+
+                $this->items_by_date[$date_sig]['rank']++;
+
+                $this->notifs_by_day[$notif_key][$date_sig][] = $item;
+
+                if(!isset($this->notifs_by_user[$notif_key][$profile['handle']]))
+                    $this->notifs_by_user[$notif_key][$profile['handle']] = 0;
+
+                $this->notifs_by_user[$notif_key][$profile['handle']]++;
+            }
+        }
+    }
+
+
+
+
+    public function calcFollowers()
+    {
+        if( empty($this->items_by_date) )
+        {
+            php_die("calcFollowers(): nothing to do".PHP_EOL);
+        }
+
+        usort($this->items_by_date, fn($a, $b) => (date_parse($a['created_at']) > date_parse($b['created_at'])));
+
+        $followers = 0;
+        $followers_avg = 0;
+        $avg_size = 0;
+
+        $reach_total = 0;
+        $reach_days  = 0;
+
+        // print_r($this->notifs_by_day['follow']);
+
+        foreach($this->items_by_date as $idx => $post)
+        {
+            $date_sig = $post['created_at'];
+            $follows = 0;
+            if( isset($this->notifs_by_day['follow'][$date_sig]) )
+            {
+                $follows = count($this->notifs_by_day['follow'][$date_sig]);
+                $followers += $follows;
+                //echo "$follows follows on $date_sig (total=$followers, last avg=$followers_avg) (idx $idx)".PHP_EOL;
+            }
+
+            $reach_days++;
+            $reach_total += $this->items_by_date[$idx]['reach'];
+            $reach_avg = $reach_total/$reach_days;
+            $this->items_by_date[$idx]['reach_avg']     = $reach_avg;
+
+            if( $followers > 0 )
+            {
+                $avg_size++;
+                $followers_avg += $followers/$avg_size;
+            }
+            $this->items_by_date[$idx]['follows']       = $follows;
+            $this->items_by_date[$idx]['followers']     = $followers;
+            $this->items_by_date[$idx]['followers_avg'] = $followers_avg;
+        }
+
+        $this->followersCount = $this->me['followersCount'];
+
+        if($this->followersCount != $followers )
+        {
+            // Bot profile reports more or less followers than measured in notifications dataset.
+            // Happens when the dataset is limited to a time range and/or has been pruned.
+            // Adjust every entry accordingly.
+            $offset = $this->followersCount - $followers;
+            foreach($this->items_by_date as $idx => $post)
+            {
+                $this->items_by_date[$idx]['followers'] += $offset;
+                $this->items_by_date[$idx]['followers_avg'] += $offset;
+            }
+        }
+
+    }
+
+
+
+
+    public function calcRank()
+    {
+        if( empty($this->items_by_date) )
+        {
+            php_die("calcRank(): nothing to do".PHP_EOL);
+        }
+
+        usort($this->items_by_date, fn($a, $b) => ($a['rank'] < $b['rank']));
+        $rank = 1;
+        foreach($this->items_by_date as $num => $toot)
+        {
+            $this->items_by_date[$num]['rank'] = $rank;
+            $rank++;
+        }
+    }
+
+
+
+    public function printReach($max = 10)
+    {
+        if( empty($this->items_by_date) )
+        {
+            php_die("printReach(): nothing to do".PHP_EOL);
+        }
+
+        echo PHP_EOL."SaintObjets with most reached accounts (REACH=rebloggers' followers):".PHP_EOL;
+
+        usort($this->items_by_date, fn($a, $b) => ($a['reach'] < $b['reach']));
+        $count = 0;
+        foreach($this->items_by_date as $cid => $post)
+        {
+            echo sprintf("[REACH:%5d] (RT:%2d, RE:%2d, FAV:%2d) [%s] %s".PHP_EOL, $post['reach'], $post['reblogs_count'], $post['replies_count'], $post['favourites_count'], $post['created_at'], $post['object'] );
+            if(++$count>=$max)
+            {
+                $this->reach_waterline = $post['reach'];
+                break;
+            }
+        }
+    }
+
+
+    public function printRank($max = 10)
+    {
+        if( empty($this->items_by_date) )
+        {
+            php_die("printRank(): nothing to do".PHP_EOL);
+        }
+
+        echo PHP_EOL."SaintObjets with most interactions (RANK=RT+RE+FAV):".PHP_EOL;
+
+        usort($this->items_by_date, fn($a, $b) => ($a['rank'] > $b['rank']));
+        $count = 0;
+        foreach($this->items_by_date as $cid => $post)
+        {
+            echo sprintf("[RANK: %d] (RT:%2d, RE:%2d, FAV:%2d) [%s] %s".PHP_EOL, $post['rank'], $post['reblogs_count'], $post['replies_count'], $post['favourites_count'], $post['created_at'], $post['object'] );
+            if(++$count>=$max)
+                break;
+        }
+    }
+
+
+
+    public function genCSV()
+    {
+        $this->genCSVStats($this->items_by_date);
+        $this->plotStats();
+    }
+
+
+    public function getProfile()
+    {
+        return $this->me;
     }
 
 
@@ -82,11 +416,11 @@ class BlueskyStats
         {
             if(!is_dir($author_dir))
                 mkdir($author_dir, 0777, true) or php_die("Unable to create profile dir $author_dir".PHP_EOL);
-            $profile = $this->fetchProfile($author_ary);
-            $this->saveJSON($author_filename, $profile) or php_die("Unable to save profile file $author_filename".PHP_EOL);
+            $profile = $this->api->fetchProfile($author_ary);
+            saveJSON($author_filename, $profile) or php_die("Unable to save profile file $author_filename".PHP_EOL);
         }
         else
-            $profile = $this->loadJSON($author_filename);
+            $profile = loadJSON($author_filename);
 
         if(empty($profile))
             php_die("Invalid profile file $author_filename".PHP_EOL);
@@ -96,20 +430,19 @@ class BlueskyStats
 
     public function getProfiles()
     {
-        $cached_profiles = $this->loadJSON($this->profiles_history_json);
+        // $cached_profiles = loadJSON($this->profiles_history_json);
+        //if(!empty($cached_profiles))
+        //    echo "Loading ".count($cached_profiles)." cached profiles".PHP_EOL;
+
         $profiles = [];
-
-        if(!empty($cached_profiles))
-            echo "Loading ".count($cached_profiles)." cached profiles".PHP_EOL;
-
-        $cached_notifs = $this->loadJSON($this->notifs_history_json);
+        $cached_notifs = loadJSON($this->notifs_history_json);
 
         if(!empty($cached_notifs))
         {
             $total_notifs = 0;
             foreach($cached_notifs as $reason => $notifs)
                 $total_notifs += count($notifs);
-            echo "Extracting profiles from $total_notifs notifications".PHP_EOL;
+            //echo "Extracting profiles from $total_notifs notifications".PHP_EOL;
         }
 
         foreach($cached_notifs as $reason => $notifs)
@@ -127,9 +460,9 @@ class BlueskyStats
             }
         }
 
-        echo "Got ".count($profiles)." profiles".PHP_EOL;
+        //echo "Got ".count($profiles)." profiles".PHP_EOL;
 
-        $this->saveJSON($this->profiles_history_json, $profiles) or php_die("Unable to save profiles to $this->profiles_history_json".PHP_EOL);
+        saveJSON($this->profiles_history_json, $profiles) or php_die("Unable to save profiles to $this->profiles_history_json".PHP_EOL);
 
         return $profiles;
     }
@@ -140,101 +473,11 @@ class BlueskyStats
     {
         if( file_exists($this->posts_history_json) && filemtime($this->posts_history_json)+$this->posts_expire_after > time() )
         {
-            return $this->loadJSON($this->posts_history_json);
+            return loadJSON($this->posts_history_json);
         }
-        $posts = $this->fetchPostsFromMe();
-        $this->saveJSON($this->posts_history_json, $posts ) or php_die("Unable to save posts".PHP_EOL);
+        $posts = $this->api->fetchPostsFromMe($this->cache_posts_dir);
+        saveJSON($this->posts_history_json, $posts ) or php_die("Unable to save posts".PHP_EOL);
         return $posts;
-    }
-
-
-
-    public function fetchPostsFromMe()
-    {
-        echo "Fetching Posts 'from:me'".PHP_EOL;
-
-        $cursor = null;
-        $posts = [];
-
-        for(;;)
-        {
-            $resp = $this->api->request('GET', 'app.bsky.feed.searchPosts', ['q'=>'from:me', 'sort'=>'latest', 'limit'=>100, 'cursor' => $cursor ] );
-
-            if( !$resp || isset( $resp['curl_error_code'] ) || !isset($resp['posts']) )
-            {
-                print_r($resp);
-                php_die("... Search failed:".PHP_EOL);
-            }
-
-            if( empty($resp['posts']) )
-            {
-                echo "No more results".PHP_EOL;
-                break;
-            }
-
-            $added = 0;
-
-            foreach( $resp['posts'] as $item )
-            {
-                $record = $item['record'];
-
-                $post = [
-                    'text'        => $record['text'],
-                    'createdAt'   => $record['createdAt'],
-                    'cid'         => $item['cid'],
-                    'uri'         => $item['uri'],
-                    'replyCount'  => $item['replyCount'],
-                    'repostCount' => $item['repostCount'],
-                    'likeCount'   => $item['likeCount'],
-                    'quoteCount'  => $item['quoteCount'],
-                ];
-
-                $date_ary = date_parse($post['createdAt']);
-
-                $date_path = sprintf("%04d/%02d/%02d",
-                    $date_ary['year'],
-                    $date_ary['month'],
-                    $date_ary['day']
-                );
-
-                $date_dir = $this->cache_posts_dir.'/'.$date_path;
-
-                if( !is_dir($date_dir) )
-                    mkdir($date_dir, 0777, true) or php_die("Unable to create dir $date_dir".PHP_EOL);
-
-                $post_filename = sprintf("%s/%02dh%02dm%02ds.json",
-                    $date_dir,
-                    $date_ary['hour'],
-                    $date_ary['minute'],
-                    $date_ary['second']
-                );
-
-                $this->saveJSON($post_filename, $post) or php_die("Unable to save post".PHP_EOL);
-
-                $posts[] = $post;
-                $added++;
-            }
-
-            echo sprintf("Added %d/%d items, cursor: %s", $added, count($resp['posts']), $cursor?$cursor:'initial').PHP_EOL;
-
-            if(!isset($resp['cursor']) )
-            {
-                echo "No more cursor".PHP_EOL;
-                break;
-            }
-
-            if( $cursor == $resp['cursor'] )
-            {
-                echo "No new cursor".PHP_EOL;
-                break;
-            }
-
-            $cursor = $resp['cursor'];
-
-        }
-
-        return $posts;
-
     }
 
 
@@ -243,95 +486,13 @@ class BlueskyStats
     {
         if( file_exists($this->notifs_history_json) && filemtime($this->notifs_history_json)+$this->notifs_expire_after > time() )
         {
-            return $this->loadJSON($this->notifs_history_json);
+            return loadJSON($this->notifs_history_json);
         }
-        $posts = $this->fetchNotifications();
-        $this->saveJSON($this->notifs_history_json, $posts) or php_die("Unable to save posts".PHP_EOL);
+        $posts = $this->api->fetchNotifications($this->cache_notifs_dir);
+        saveJSON($this->notifs_history_json, $posts) or php_die("Unable to save posts".PHP_EOL);
         return $posts;
     }
 
-
-
-    public function fetchNotifications()
-    {
-        $cursor = null;
-        $zero_count = ['count'=>0];
-
-        $notifications = [
-            'follow'  => [],
-            'like'    => [],
-            'quote'   => [],
-            'reply'   => [],
-            'repost'  => [],
-            'mention' => []
-        ];
-
-        echo "Fetching notifications".PHP_EOL;
-
-        for(;;)
-        {
-            $resp = $this->api->request('GET', 'app.bsky.notification.listNotifications', [
-                'limit'  => 100,
-                'cursor' => $cursor
-            ]);
-
-            if( empty($resp['notifications']) )
-            {
-                echo "No more results".PHP_EOL;
-                break;
-            }
-
-            $added = 0;
-
-            foreach( $resp['notifications'] as $notification )
-            {
-                $date_ary = date_parse($notification['indexedAt']);
-
-                $date_path = sprintf("%04d/%02d/%02d/%s",
-                    $date_ary['year'],
-                    $date_ary['month'],
-                    $date_ary['day'],
-                    $notification['reason']
-                );
-
-                $date_dir = $this->cache_notifs_dir.'/'.$date_path;
-
-                if( !is_dir($date_dir) )
-                    mkdir($date_dir, 0777, true) or php_die("Unable to create dir $date_dir".PHP_EOL);
-
-                $notif_filename = sprintf("%s/%02dh%02dm%02ds.json",
-                    $date_dir,
-                    $date_ary['hour'],
-                    $date_ary['minute'],
-                    $date_ary['second']
-                );
-
-                $this->saveJSON($notif_filename, $notification) or php_die("Unable to save notification".PHP_EOL);
-
-                $notifications[$notification['reason']][] = $notification;
-                $added++;
-            }
-
-            echo sprintf("Added %d/%d items, cursor: %s", $added, count($resp['notifications']), $cursor?$cursor:'initial').PHP_EOL;
-
-
-            if(!isset($resp['cursor']) )
-            {
-                echo "No more cursor".PHP_EOL;
-                break;
-            }
-
-            if( $cursor == $resp['cursor'] )
-            {
-                echo "No new cursor".PHP_EOL;
-                break;
-            }
-
-            $cursor = $resp['cursor'];
-        }
-
-        return $notifications;
-    }
 
 
 
@@ -339,110 +500,48 @@ class BlueskyStats
     {
         if( file_exists($this->records_history_json) && filemtime($this->records_history_json)+$this->records_expire_after > time() )
         {
-            return $this->loadJSON($this->records_history_json);
+            return loadJSON($this->records_history_json);
         }
-        $records = $this->listRecords();
+        $records = $this->api->fetchRecords($this->cache_posts_dir);
         file_put_contents($this->records_history_json, json_encode($records) ) or php_die("Unable to save records".PHP_EOL);
         return $records;
     }
 
 
 
-
-    private function listRecords()
-    {
-        $cursor = null;
-        $posts = [];
-
-        echo "Fetching records".PHP_EOL;
-
-        for(;;)
-        {
-            $resp = $this->api->request('GET', 'com.atproto.repo.listRecords', [
-                'repo' => $this->api->getSession()['handle'],
-                'collection' => 'app.bsky.feed.post',
-                //'limit'=>100,
-                'cursor' => $cursor
-            ]);
-
-            if( empty($resp['records']) )
-            {
-                echo "No more results".PHP_EOL;
-                break;
-            }
-
-            $added = 0;
-
-            foreach( $resp['records'] as $record )
-            {
-                $post = $record['value'];
-                $post['cid'] = $record['cid'];
-                $post['uri'] = $record['uri'];
-                unset($post['type']);
-
-                $date_ary = date_parse($post['createdAt']);
-                $date_path = sprintf("%04d/%02d/%02d", // /,
-                    $date_ary['year'],
-                    $date_ary['month'],
-                    $date_ary['day']
-                );
-
-                $date_dir = $this->cache_posts_dir.'/'.$date_path;
-
-                if( !is_dir($date_dir) )
-                    mkdir($date_dir, 0777, true) or php_die("Unable to create dir $date_dir".PHP_EOL);
-
-                $record_filename = sprintf("%s/record-%02dh%02dm%02ds.json",
-                    $date_dir,
-                    $date_ary['hour'],
-                    $date_ary['minute'],
-                    $date_ary['second']
-                );
-
-                $this->saveJSON($record_filename, $record) or php_die("Unable to save post".PHP_EOL);
-
-                $posts[] = $post;
-                $added++;
-            }
-
-            echo sprintf("Added %d/%d posts, cursor: %s, last date: %s", $added, count($resp['records']), $cursor?$cursor:'initial', $date_path).PHP_EOL;
-
-
-            if(!isset($resp['cursor']) )
-            {
-                echo "No more cursor".PHP_EOL;
-                break;
-            }
-
-            if( $cursor == $resp['cursor'] )
-            {
-                echo "No new cursor".PHP_EOL;
-                break;
-            }
-
-            $cursor = $resp['cursor'];
-
-            //sleep(1);
-        }
-
-        return $posts;
-    }
-
-
-
-    public function genCSVStats($data)
+    private function genCSVStats($data)
     {
         if( empty($data ) )
             php_die("genCSVStats: nothing to do".PHP_EOL);
+
+        $oneYearAgo = strtotime('-1 year');
 
         // sort ascending
         usort($data, fn($a, $b) => (date_parse($a['created_at']) > date_parse($b['created_at'])));
         // save stats as csv
         $fp = fopen($this->stats_file_csv, 'w');
-        // populate first row with column names
-        fputcsv($fp, ["created_at", "id", "object", "follows", "followers (total)", "reach", "rank", "reblogs_count", "replies_count", "favourites_count", "followers_avg", "reach_avg"] );
+        $column_titles = [
+            "created_at",
+            "id",
+            "object",
+            "follows",
+            "followers (total)",
+            "reach",
+            "rank",
+            "reblogs_count",
+            "replies_count",
+            "favourites_count",
+            "followers_avg",
+            "reach_avg"
+        ];
+        // populate first row with column titles
+        fputcsv($fp, $column_titles );
         foreach($data as $num => $post)
         {
+
+            if( $oneYearAgo > strtotime( $post['created_at'] ) )
+                continue;
+
             fputcsv($fp, [
                 $post['created_at'],
                 $post['id'],
@@ -462,7 +561,7 @@ class BlueskyStats
     }
 
 
-    public function plotStats( $width=1280, $height=748)
+    private function plotStats( $width=1280, $height=748)
     {
         if(!file_exists($this->stats_file_csv))
         {
@@ -474,42 +573,28 @@ class BlueskyStats
 
         if(empty($out) || empty($out[0]))
         {
-            echo ("gnuplot is not installed!".PHP_EOL);
+            echo "gnuplot is not installed!".PHP_EOL;
             return;
         }
         if(!file_exists($out[0])) {
-            echo ("gnuplot not reachable:  ".$out[0].PHP_EOL);
+            echo "gnuplot not reachable:  ".$out[0].PHP_EOL;
             return;
         }
 
         $gnuplot = $out[0];
 
-        $plotprefix = "Grouchabot Bluesky:";
+        $dateToday = date("Y-m-d");
+        $plotprefix = "Grouchabot Bluesky YTD($dateToday):";
+        $reach_ytics = 1000;
+        $reach_waterline= $this->reach_waterline-($this->reach_waterline%$reach_ytics);
 
-        $format = "%s -e \"outputtitle='%s'; outputfilename='%s'; filename='%s'; width=%d; height=%d;\" %s";
+        $format = "%s -e \"outputtitle='%s %s'; outputfilename='%s'; filename='%s'; width=%d; height=%d; reach_waterline=%d; reach_ytics=%d\" %s";
 
-        $execFollowers = sprintf($format, $gnuplot, "$plotprefix Followers Growth",   "$this->cache_dir/followers.png", $this->stats_file_csv, $width, $height, "data/followers.gnuplot");
-        $execReach     = sprintf($format, $gnuplot, "$plotprefix Reach vs Followers", "$this->cache_dir/reach.png",     $this->stats_file_csv, $width, $height, "data/reach.gnuplot");
+        $execFollowers = sprintf($format, $gnuplot, $plotprefix, "Followers Growth",   "$this->cache_dir/followers.png", $this->stats_file_csv, $width, $height, $reach_waterline, $reach_ytics, "data/followers.gnuplot");
+        $execReach     = sprintf($format, $gnuplot, $plotprefix, "Reach vs Followers", "$this->cache_dir/reach.png",     $this->stats_file_csv, $width, $height, $reach_waterline, $reach_ytics, "data/reach.gnuplot");
 
         exec($execFollowers);
         exec($execReach);
-    }
-
-
-
-    private function saveJSON($path, $arr)
-    {
-        // TODO: check if is_writable( dirname($path) );
-        return file_put_contents($path, json_encode($arr, JSON_PRETTY_PRINT));
-    }
-
-
-    private function loadJSON($path)
-    {
-        if(!file_exists($path))
-            return [];
-
-        return json_decode(file_get_contents($path), true);
     }
 
 

@@ -6,6 +6,36 @@ function php_die($msg, $status=1)
   exit($status);
 }
 
+function mstdn_die( $msg, $res )
+{
+  print_r($res);
+  php_die( sprintf("... Failed to post to fediverse (%s)".PHP_EOL, $msg) );
+}
+
+function php_log($msg)
+{
+  echo sprintf("[%s] %s", date('Y-m-d\TH:i:s'), $msg );
+}
+
+function php_logln($msg)
+{
+    php_log($msg.PHP_EOL);
+}
+
+
+function php_logd($msg)
+{
+  if( defined('DEBUG_LEVEL') )
+    switch( true )
+    {
+      case DEBUG_LEVEL>0:
+        if(strlen($msg)>1) php_log($msg);
+        else echo $msg;
+      default:
+        break;
+    }
+}
+
 
 function get_QOTD( $csv_file )
 {
@@ -55,6 +85,22 @@ function getQuoteData($date, $ary)
     }
   }
   php_die("Date not found".PHP_EOL);
+}
+
+
+function saveJSON($path, $arr)
+{
+    // TODO: check if is_writable( dirname($path) );
+    return file_put_contents($path, json_encode($arr, JSON_PRETTY_PRINT));
+}
+
+
+function loadJSON($path)
+{
+    if(!file_exists($path))
+        return [];
+
+    return json_decode(file_get_contents($path), true);
 }
 
 
