@@ -1,0 +1,2166 @@
+[
+    {
+        "youtube_id": "82-gzH9Q09I",
+        "season": "01",
+        "episode": "01",
+        "saintobjet": "Clef",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E01 - Saint-Clé [82-gzH9Q09I].webm",
+        "segment": "S01E01-[82-gzH9Q09I]-Clef.mp4",
+        "video_segment": {
+            "from": "00:00:26.040",
+            "to": "00:00:40.780",
+            "ms": 14740
+        }
+    },
+    {
+        "youtube_id": "POLBNFcxLVc",
+        "season": "01",
+        "episode": "03",
+        "saintobjet": "Fer à repasser",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E03 - Saint-Fer à repasser [POLBNFcxLVc].mkv",
+        "segment": "S01E03-[POLBNFcxLVc]-Fer à repasser.mp4",
+        "video_segment": {
+            "from": "00:00:20.600",
+            "to": "00:00:27.000",
+            "ms": 6400
+        }
+    },
+    {
+        "youtube_id": "XACK_6kUjR4",
+        "season": "01",
+        "episode": "04",
+        "saintobjet": "Socquette",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E04 - Sainte-Soquette [XACK_6kUjR4].mkv",
+        "segment": "S01E04-[XACK_6kUjR4]-Socquette.mp4",
+        "video_segment": {
+            "from": "00:00:31.000",
+            "to": "00:00:36.000",
+            "ms": 5000
+        }
+    },
+    {
+        "youtube_id": "LDuNFty3jEs",
+        "season": "01",
+        "episode": "05",
+        "saintobjet": "Poupée",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E05 - Sainte-Poupée [LDuNFty3jEs].mkv",
+        "segment": "S01E05-[LDuNFty3jEs]-Poupée.mp4",
+        "video_segment": {
+            "from": "00:00:13.000",
+            "to": "00:00:21.000",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "E7AhiMSnA7Y",
+        "season": "01",
+        "episode": "07",
+        "saintobjet": "Marteau",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E07 - Saint-Marteau [E7AhiMSnA7Y].mkv",
+        "segment": "S01E07-[E7AhiMSnA7Y]-Marteau.mp4",
+        "video_segment": {
+            "from": "00:00:00.000",
+            "to": "00:00:18.400",
+            "ms": 18400
+        }
+    },
+    {
+        "youtube_id": "aPgF_T6Fd38",
+        "season": "01",
+        "episode": "08",
+        "saintobjet": "Coucou",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E08 - Saint-Coucou [aPgF_T6Fd38].mkv",
+        "segment": "S01E08-[aPgF_T6Fd38]-Coucou.mp4",
+        "video_segment": {
+            "from": "00:00:56.000",
+            "to": "00:01:06.000",
+            "ms": 10000
+        }
+    },
+    {
+        "youtube_id": "z4q4p64MGvk",
+        "season": "01",
+        "episode": "10",
+        "saintobjet": "Dictionnaire",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E10 - Saint-Dictionnaire [z4q4p64MGvk].mkv",
+        "segment": "S01E10-[z4q4p64MGvk]-Dictionnaire.mp4",
+        "video_segment": {
+            "from": "00:00:13.300",
+            "to": "00:00:19.480",
+            "ms": 6180
+        }
+    },
+    {
+        "youtube_id": "TLk2FBrN0ng",
+        "season": "01",
+        "episode": "11",
+        "saintobjet": "Brique",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E11 - Saint-Brique [TLk2FBrN0ng].mkv",
+        "segment": "S01E11-[TLk2FBrN0ng]-Brique.mp4",
+        "video_segment": {
+            "from": "00:00:21.000",
+            "to": "00:00:27.500",
+            "ms": 6500
+        }
+    },
+    {
+        "youtube_id": "RZVT-scetfY",
+        "season": "01",
+        "episode": "12",
+        "saintobjet": "Cendrier",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E12 - Saint-Cendrier [RZVT-scetfY].mkv",
+        "segment": "S01E12-[RZVT-scetfY]-Cendrier.mp4",
+        "video_segment": {
+            "from": "00:01:06.000",
+            "to": "00:01:12.800",
+            "ms": 6800
+        }
+    },
+    {
+        "youtube_id": "lP5BIStFWnw",
+        "season": "01",
+        "episode": "13",
+        "saintobjet": "Robinet qui goutte",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E13 - Saint-Robinet qui goutte [lP5BIStFWnw].mkv",
+        "segment": "S01E13-[lP5BIStFWnw]-Robinet qui goutte.mp4",
+        "video_segment": {
+            "from": "00:00:56.000",
+            "to": "00:01:04.500",
+            "ms": 8500
+        }
+    },
+    {
+        "youtube_id": "ZgvB90TAda8",
+        "season": "01",
+        "episode": "14",
+        "saintobjet": "Morceau de sucre",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E14 - Saint-Morceau de sucre [ZgvB90TAda8].mkv",
+        "segment": "S01E14-[ZgvB90TAda8]-Morceau de sucre.mp4",
+        "video_segment": {
+            "from": "00:00:00.000",
+            "to": "00:00:17.000",
+            "ms": 17000
+        }
+    },
+    {
+        "youtube_id": "0YHpgK5XZLg",
+        "season": "01",
+        "episode": "15",
+        "saintobjet": "Sifflet",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E15 - Saint-Sifflet [0YHpgK5XZLg].mkv",
+        "segment": "S01E15-[0YHpgK5XZLg]-Sifflet.mp4",
+        "video_segment": {
+            "from": "00:02:34.980",
+            "to": "00:02:44.180",
+            "ms": 9200
+        }
+    },
+    {
+        "youtube_id": "hsOQpWHH6Ig",
+        "season": "01",
+        "episode": "17",
+        "saintobjet": "Maison de campagne",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E17 - Sainte-Maison de Campagne [hsOQpWHH6Ig].mkv",
+        "segment": "S01E17-[hsOQpWHH6Ig]-Maison de campagne.mp4",
+        "video_segment": {
+            "from": "00:00:34.000",
+            "to": "00:00:43.000",
+            "ms": 9000
+        }
+    },
+    {
+        "youtube_id": "f3HvjOtkVtM",
+        "season": "01",
+        "episode": "18",
+        "saintobjet": "Cornichon",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E18 - Saint-Cornichon [f3HvjOtkVtM].mkv",
+        "segment": "S01E18-[f3HvjOtkVtM]-Cornichon.mp4",
+        "video_segment": {
+            "from": "00:00:00.000",
+            "to": "00:00:06.000",
+            "ms": 6000
+        }
+    },
+    {
+        "youtube_id": "znULGDlNYjQ",
+        "season": "01",
+        "episode": "19",
+        "saintobjet": "Os",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E19 - Saint-Os [znULGDlNYjQ].mkv",
+        "segment": "S01E19-[znULGDlNYjQ]-Os.mp4",
+        "video_segment": {
+            "from": "00:00:19.420",
+            "to": "00:00:28.580",
+            "ms": 9160
+        }
+    },
+    {
+        "youtube_id": "iWzPwpA5z_4",
+        "season": "01",
+        "episode": "20",
+        "saintobjet": "Souvenir",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E20 - Saint-Souvenir [iWzPwpA5z_4].mkv",
+        "segment": "S01E20-[iWzPwpA5z_4]-Souvenir.mp4",
+        "video_segment": {
+            "from": "00:00:19.300",
+            "to": "00:00:26.000",
+            "ms": 6700
+        }
+    },
+    {
+        "youtube_id": "yohgJJSliuo",
+        "season": "01",
+        "episode": "21",
+        "saintobjet": "Petit pot de lait",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E21 - Saint-Petit Pot de Lait [yohgJJSliuo].mkv",
+        "segment": "S01E21-[yohgJJSliuo]-Petit pot de lait.mp4",
+        "video_segment": {
+            "from": "00:00:07.000",
+            "to": "00:00:18.500",
+            "ms": 11500
+        }
+    },
+    {
+        "youtube_id": "I1EnH70DYBI",
+        "season": "01",
+        "episode": "22",
+        "saintobjet": "Fer à cheval",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E22 - Saint-Fer-à-Cheval [I1EnH70DYBI].mkv",
+        "segment": "S01E22-[I1EnH70DYBI]-Fer à cheval.mp4",
+        "video_segment": {
+            "from": "00:00:30.000",
+            "to": "00:00:44.000",
+            "ms": 14000
+        }
+    },
+    {
+        "youtube_id": "q0lq7FfZAf4",
+        "season": "01",
+        "episode": "24",
+        "saintobjet": "Enveloppe",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E24 - Sainte-Enveloppe [q0lq7FfZAf4].mkv",
+        "segment": "S01E24-[q0lq7FfZAf4]-Enveloppe.mp4",
+        "video_segment": {
+            "from": "00:00:24.000",
+            "to": "00:00:30.150",
+            "ms": 6150
+        }
+    },
+    {
+        "youtube_id": "NOSYtxbfRDE",
+        "season": "01",
+        "episode": "25",
+        "saintobjet": "Rouge à lèvres",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E25 - Saint-Rouge à lèvres [NOSYtxbfRDE].mkv",
+        "segment": "S01E25-[NOSYtxbfRDE]-Rouge à lèvres.mp4",
+        "video_segment": {
+            "from": "00:00:16.000",
+            "to": "00:00:25.000",
+            "ms": 9000
+        }
+    },
+    {
+        "youtube_id": "5dfW0QJo8UY",
+        "season": "01",
+        "episode": "26",
+        "saintobjet": "Rouge vermillon",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E26 - Saint-Rouge vermillon [5dfW0QJo8UY].mp4",
+        "segment": "S01E26-[5dfW0QJo8UY]-Rouge vermillon.mp4",
+        "video_segment": {
+            "from": "00:00:56.000",
+            "to": "00:01:07.000",
+            "ms": 11000
+        }
+    },
+    {
+        "youtube_id": "7hNc0799UQc",
+        "season": "01",
+        "episode": "29",
+        "saintobjet": "Boussole",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E29 - Saint-Boussole [7hNc0799UQc].mkv",
+        "segment": "S01E29-[7hNc0799UQc]-Boussole.mp4",
+        "video_segment": {
+            "from": "00:00:10.300",
+            "to": "00:00:19.700",
+            "ms": 9400
+        }
+    },
+    {
+        "youtube_id": "mySPFsAPmMU",
+        "season": "01",
+        "episode": "30",
+        "saintobjet": "Élastique",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E30 - Saint-Élastique [mySPFsAPmMU].mp4",
+        "segment": "S01E30-[mySPFsAPmMU]-Élastique.mp4",
+        "video_segment": {
+            "from": "00:00:25.360",
+            "to": "00:00:32.160",
+            "ms": 6800
+        }
+    },
+    {
+        "youtube_id": "FbDKGQCFVOc",
+        "season": "01",
+        "episode": "31",
+        "saintobjet": "Calendrier",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E31 - Saint-Calendrier [FbDKGQCFVOc].mkv",
+        "segment": "S01E31-[FbDKGQCFVOc]-Calendrier.mp4",
+        "video_segment": {
+            "from": "00:00:23.500",
+            "to": "00:00:29.900",
+            "ms": 6400
+        }
+    },
+    {
+        "youtube_id": "9nKgrG3D1wI",
+        "season": "01",
+        "episode": "32",
+        "saintobjet": "Jeton",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E32 - Saint-Jeton [9nKgrG3D1wI].mkv",
+        "segment": "S01E32-[9nKgrG3D1wI]-Jeton.mp4",
+        "video_segment": {
+            "from": "00:00:43.000",
+            "to": "00:00:55.000",
+            "ms": 12000
+        }
+    },
+    {
+        "youtube_id": "Jfl-QiJrZco",
+        "season": "01",
+        "episode": "33",
+        "saintobjet": "Menottes",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E33 - Saint-Menottes [Jfl-QiJrZco].mkv",
+        "segment": "S01E33-[Jfl-QiJrZco]-Menottes.mp4",
+        "video_segment": {
+            "from": "00:00:48.000",
+            "to": "00:01:04.000",
+            "ms": 16000
+        }
+    },
+    {
+        "youtube_id": "zBMKHsZwdbw",
+        "season": "01",
+        "episode": "34",
+        "saintobjet": "Petit carnet",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E34 - Saint-Petit Carnet [zBMKHsZwdbw].mkv",
+        "segment": "S01E34-[zBMKHsZwdbw]-Petit carnet.mp4",
+        "video_segment": {
+            "from": "00:01:17.040",
+            "to": "00:01:25.400",
+            "ms": 8360
+        }
+    },
+    {
+        "youtube_id": "26Cc6J2fyAQ",
+        "season": "01",
+        "episode": "37",
+        "saintobjet": "Coquillette",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E37 - Saint-Coquillette [26Cc6J2fyAQ].mkv",
+        "segment": "S01E37-[26Cc6J2fyAQ]-Coquillette.mp4",
+        "video_segment": {
+            "from": "00:00:53.520",
+            "to": "00:01:01.920",
+            "ms": 8400
+        }
+    },
+    {
+        "youtube_id": "LifxJMwKa30",
+        "season": "01",
+        "episode": "38",
+        "saintobjet": "Mode d'emploi",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E38 - Saint-Mode d'Emploi [LifxJMwKa30].mkv",
+        "segment": "S01E38-[LifxJMwKa30]-Mode d'emploi.mp4",
+        "video_segment": {
+            "from": "00:00:52.000",
+            "to": "00:01:00.800",
+            "ms": 8800
+        }
+    },
+    {
+        "youtube_id": "6K0IcBUy67I",
+        "season": "01",
+        "episode": "39",
+        "saintobjet": "Coton-tige",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E39 - Saint-Coton-Tige [6K0IcBUy67I].mkv",
+        "segment": "S01E39-[6K0IcBUy67I]-Coton-tige.mp4",
+        "video_segment": {
+            "from": "00:00:37.000",
+            "to": "00:00:46.000",
+            "ms": 9000
+        }
+    },
+    {
+        "youtube_id": "BJLYZOMZb7Y",
+        "season": "01",
+        "episode": "40",
+        "saintobjet": "Cacahuète",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E40 - Saint-Cacahuète [BJLYZOMZb7Y].mkv",
+        "segment": "S01E40-[BJLYZOMZb7Y]-Cacahuète.mp4",
+        "video_segment": {
+            "from": "00:00:25.960",
+            "to": "00:00:45.960",
+            "ms": 20000
+        }
+    },
+    {
+        "youtube_id": "GbJvurElHv4",
+        "season": "01",
+        "episode": "41",
+        "saintobjet": "Disque",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E41 - Saint-Disque [GbJvurElHv4].mkv",
+        "segment": "S01E41-[GbJvurElHv4]-Disque.mp4",
+        "video_segment": {
+            "from": "00:00:17.580",
+            "to": "00:00:24.460",
+            "ms": 6880
+        }
+    },
+    {
+        "youtube_id": "VGnhunj8078",
+        "season": "01",
+        "episode": "44",
+        "saintobjet": "Peigne",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E44 - Saint-Peigne [VGnhunj8078].mkv",
+        "segment": "S01E44-[VGnhunj8078]-Peigne.mp4",
+        "video_segment": {
+            "from": "00:00:18.680",
+            "to": "00:00:37.120",
+            "ms": 18440
+        }
+    },
+    {
+        "youtube_id": "fIMu_TaUdhI",
+        "season": "01",
+        "episode": "45",
+        "saintobjet": "Fleur artificielle",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E45 - Saint-Fleur artificielle [fIMu_TaUdhI].mkv",
+        "segment": "S01E45-[fIMu_TaUdhI]-Fleur artificielle.mp4",
+        "video_segment": {
+            "from": "00:00:01.400",
+            "to": "00:00:11.900",
+            "ms": 10500
+        }
+    },
+    {
+        "youtube_id": "iSvhY0Cg3DI",
+        "season": "01",
+        "episode": "46",
+        "saintobjet": "Numéro",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E46 - Saint-Numéro [iSvhY0Cg3DI].mkv",
+        "segment": "S01E46-[iSvhY0Cg3DI]-Numéro.mp4",
+        "video_segment": {
+            "from": "00:00:18.500",
+            "to": "00:00:30.300",
+            "ms": 11800
+        }
+    },
+    {
+        "youtube_id": "yDJ0QhR2exw",
+        "season": "01",
+        "episode": "47",
+        "saintobjet": "Blague",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E47 - Saint-Blague [yDJ0QhR2exw].mkv",
+        "segment": "S01E47-[yDJ0QhR2exw]-Blague.mp4",
+        "video_segment": {
+            "from": "00:00:09.560",
+            "to": "00:00:21.200",
+            "ms": 11640
+        }
+    },
+    {
+        "youtube_id": "4bu-sY9nuj0",
+        "season": "01",
+        "episode": "48",
+        "saintobjet": "Tire-bouchon",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E48 - Saint-Tire-bouchon [4bu-sY9nuj0].mkv",
+        "segment": "S01E48-[4bu-sY9nuj0]-Tire-bouchon.mp4",
+        "video_segment": {
+            "from": "00:01:16.000",
+            "to": "00:01:24.800",
+            "ms": 8800
+        }
+    },
+    {
+        "youtube_id": "brPZXvTiy24",
+        "season": "01",
+        "episode": "50",
+        "saintobjet": "Stylo",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E50 - Saint-Stylo [brPZXvTiy24].mkv",
+        "segment": "S01E50-[brPZXvTiy24]-Stylo.mp4",
+        "video_segment": {
+            "from": "00:01:04.720",
+            "to": "00:01:12.680",
+            "ms": 7960
+        }
+    },
+    {
+        "youtube_id": "dH8CjtmkPWI",
+        "season": "01",
+        "episode": "52",
+        "saintobjet": "Poignée de porte",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E52 - Saint-Poignée de porte [dH8CjtmkPWI].mkv",
+        "segment": "S01E52-[dH8CjtmkPWI]-Poignée de porte.mp4",
+        "video_segment": {
+            "from": "00:01:25.700",
+            "to": "00:01:35.400",
+            "ms": 9700
+        }
+    },
+    {
+        "youtube_id": "14DGep6R-tI",
+        "season": "01",
+        "episode": "53",
+        "saintobjet": "Marteau picoreur",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E53 - Saint-Marteau picoreur [14DGep6R-tI].mkv",
+        "segment": "S01E53-[14DGep6R-tI]-Marteau picoreur.mp4",
+        "txt": "txt/Téléchat - S01E53 - Saint-Marteau picoreur [14DGep6R-tI].mkv.txt",
+        "wav": "wav/Téléchat - S01E53 - Saint-Marteau picoreur [14DGep6R-tI].mkv.wav",
+        "video_segment": {
+            "from": "00:00:30.400",
+            "to": "00:00:33.000",
+            "ms": 2600
+        }
+    },
+    {
+        "youtube_id": "-L-k5aFWPeA",
+        "season": "01",
+        "episode": "54",
+        "saintobjet": "Marionnette",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E54 - Saint-Marionnette [-L-k5aFWPeA].mkv",
+        "segment": "S01E54-[-L-k5aFWPeA]-Marionnette.mp4",
+        "video_segment": {
+            "from": "00:00:12.200",
+            "to": "00:00:19.200",
+            "ms": 7000
+        }
+    },
+    {
+        "youtube_id": "ZpCLwKgV4LY",
+        "season": "01",
+        "episode": "56",
+        "saintobjet": "Masque",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E56 - Saint-Masque [ZpCLwKgV4LY].mkv",
+        "segment": "S01E56-[ZpCLwKgV4LY]-Masque.mp4",
+        "video_segment": {
+            "from": "00:00:45.000",
+            "to": "00:00:53.000",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "Tt_M4WSCix8",
+        "season": "01",
+        "episode": "59",
+        "saintobjet": "Interrupteur",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E59 - Saint-Interrupteur [Tt_M4WSCix8].mkv",
+        "segment": "S01E59-[Tt_M4WSCix8]-Interrupteur.mp4",
+        "video_segment": {
+            "from": "00:00:26.400",
+            "to": "00:00:35.400",
+            "ms": 9000
+        }
+    },
+    {
+        "youtube_id": "xDejpkhKz34",
+        "season": "01",
+        "episode": "60",
+        "saintobjet": "Roue",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E60 - Saint-Roue [xDejpkhKz34].mkv",
+        "segment": "S01E60-[xDejpkhKz34]-Roue.mp4",
+        "video_segment": {
+            "from": "00:00:31.600",
+            "to": "00:00:41.500",
+            "ms": 9900
+        }
+    },
+    {
+        "youtube_id": "cOLAVcfUg1M",
+        "season": "01",
+        "episode": "62",
+        "saintobjet": "Punaise",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E62 - Saint-Punaise [cOLAVcfUg1M].mkv",
+        "segment": "S01E62-[cOLAVcfUg1M]-Punaise.mp4",
+        "txt": "txt/Téléchat - S01E62 - Saint-Punaise [cOLAVcfUg1M].mkv.txt",
+        "wav": "wav/Téléchat - S01E62 - Saint-Punaise [cOLAVcfUg1M].mkv.wav",
+        "video_segment": {
+            "from": "00:00:32.000",
+            "to": "00:00:37.000",
+            "ms": 5000
+        }
+    },
+    {
+        "youtube_id": "rfpYgMYW2Po",
+        "season": "01",
+        "episode": "63",
+        "saintobjet": "Ouvre-boîte",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E63 - Saint-Ouvre-boite [rfpYgMYW2Po].mkv",
+        "segment": "S01E63-[rfpYgMYW2Po]-Ouvre-boîte.mp4",
+        "video_segment": {
+            "from": "00:02:55.720",
+            "to": "00:03:02.320",
+            "ms": 6600
+        }
+    },
+    {
+        "youtube_id": "C4fZPmCkZkU",
+        "season": "01",
+        "episode": "64",
+        "saintobjet": "Ombre",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E64 - Saint-Ombre [C4fZPmCkZkU].mkv",
+        "segment": "S01E64-[C4fZPmCkZkU]-Ombre.mp4",
+        "video_segment": {
+            "from": "00:00:56.960",
+            "to": "00:01:20.520",
+            "ms": 23560
+        }
+    },
+    {
+        "youtube_id": "q_3MG62lOfs",
+        "season": "01",
+        "episode": "65",
+        "saintobjet": "Ceinture",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E65 - Saint-Ceinture [q_3MG62lOfs].mkv",
+        "segment": "S01E65-[q_3MG62lOfs]-Ceinture.mp4",
+        "video_segment": {
+            "from": "00:00:31.000",
+            "to": "00:00:47.000",
+            "ms": 16000
+        }
+    },
+    {
+        "youtube_id": "3RbdkvNW210",
+        "season": "01",
+        "episode": "66",
+        "saintobjet": "Courant d'air",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E66 - Saint-Courant d'air [3RbdkvNW210].mkv",
+        "segment": "S01E66-[3RbdkvNW210]-Courant d'air.mp4",
+        "video_segment": {
+            "from": "00:00:17.520",
+            "to": "00:00:26.440",
+            "ms": 8920
+        }
+    },
+    {
+        "youtube_id": "HvKi4DgrGck",
+        "season": "01",
+        "episode": "69",
+        "saintobjet": "Rétroviseur",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E69 - Saint-Rétroviseur [HvKi4DgrGck].mp4",
+        "segment": "S01E69-[HvKi4DgrGck]-Rétroviseur.mp4",
+        "txt": "txt/Téléchat - S01E69 - Saint-Rétroviseur [HvKi4DgrGck].mp4.txt",
+        "wav": "wav/Téléchat - S01E69 - Saint-Rétroviseur [HvKi4DgrGck].mp4.wav",
+        "video_segment": {
+            "from": "00:01:27.000",
+            "to": "00:01:30.400",
+            "ms": 3400
+        }
+    },
+    {
+        "youtube_id": "PN6Lzt-CR9U",
+        "season": "01",
+        "episode": "71",
+        "saintobjet": "Triangle",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E71 - Saint-Triangle [PN6Lzt-CR9U].mkv",
+        "segment": "S01E71-[PN6Lzt-CR9U]-Triangle.mp4",
+        "video_segment": {
+            "from": "00:00:03.500",
+            "to": "00:00:13.500",
+            "ms": 10000
+        }
+    },
+    {
+        "youtube_id": "DtGQdsrP2zk",
+        "season": "01",
+        "episode": "72",
+        "saintobjet": "Ding Dong",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E72 - Saint-Ding Dong [DtGQdsrP2zk].mkv",
+        "segment": "S01E72-[DtGQdsrP2zk]-Ding Dong.mp4",
+        "video_segment": {
+            "from": "00:00:40.900",
+            "to": "00:00:53.600",
+            "ms": 12700
+        }
+    },
+    {
+        "youtube_id": "gW00b4rfpMM",
+        "season": "01",
+        "episode": "73",
+        "saintobjet": "Bulldozer",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E73 - Saint-Bulldozer [gW00b4rfpMM].mkv",
+        "segment": "S01E73-[gW00b4rfpMM]-Bulldozer.mp4",
+        "video_segment": {
+            "from": "00:03:29.880",
+            "to": "00:03:46.520",
+            "ms": 16640
+        }
+    },
+    {
+        "youtube_id": "fzGP_Oh9QNs",
+        "season": "01",
+        "episode": "75",
+        "saintobjet": "Petite trompette",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S01E75 - Saint-Petite trompette [fzGP_Oh9QNs].mkv",
+        "segment": "S01E75-[fzGP_Oh9QNs]-Petite trompette.mp4",
+        "video_segment": {
+            "from": "00:00:00.000",
+            "to": "00:00:14.000",
+            "ms": 14000
+        }
+    },
+    {
+        "youtube_id": "RlWso3jweWc",
+        "season": "01",
+        "episode": "76",
+        "saintobjet": "Poil",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S01E76 - Saint-Poil [RlWso3jweWc].mkv",
+        "segment": "S01E76-[RlWso3jweWc]-Poil.mp4",
+        "video_segment": {
+            "from": "00:00:00.000",
+            "to": "00:00:15.000",
+            "ms": 15000
+        }
+    },
+    {
+        "youtube_id": "kNbNo-65j_c",
+        "season": "02",
+        "episode": "01",
+        "saintobjet": "Flaque d'eau",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E01 - Saint-Flaque d'eau [kNbNo-65j_c].mp4",
+        "segment": "S02E01-[kNbNo-65j_c]-Flaque d'eau.mp4",
+        "video_segment": {
+            "from": "00:03:57.800",
+            "to": "00:03:59.800",
+            "ms": 2000
+        }
+    },
+    {
+        "youtube_id": "fq92sKaYqog",
+        "season": "02",
+        "episode": "02",
+        "saintobjet": "Cadre",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E02 - Saint-Cadre [fq92sKaYqog].mp4",
+        "segment": "S02E02-[fq92sKaYqog]-Cadre.mp4",
+        "video_segment": {
+            "from": "00:00:45.000",
+            "to": "00:01:02.500",
+            "ms": 17500
+        }
+    },
+    {
+        "youtube_id": "e1Ke12AfZN8",
+        "season": "02",
+        "episode": "03",
+        "saintobjet": "Compte-gouttes",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E03 - Saint-Compte-gouttes [e1Ke12AfZN8].mkv",
+        "segment": "S02E03-[e1Ke12AfZN8]-Compte-gouttes.mp4",
+        "video_segment": {
+            "from": "00:01:15.000",
+            "to": "00:01:26.800",
+            "ms": 11800
+        }
+    },
+    {
+        "youtube_id": "TQK5ZsoqTak",
+        "season": "02",
+        "episode": "04",
+        "saintobjet": "Laisse de chien",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E04 - Saint-Laisse de chien [TQK5ZsoqTak].mkv",
+        "segment": "S02E04-[TQK5ZsoqTak]-Laisse de chien.mp4",
+        "video_segment": {
+            "from": "00:00:33.000",
+            "to": "00:00:45.000",
+            "ms": 12000
+        }
+    },
+    {
+        "youtube_id": "gskCj_rKcVs",
+        "season": "02",
+        "episode": "05",
+        "saintobjet": "Bocal",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E05 - Saint-Bocal [gskCj_rKcVs].mkv",
+        "segment": "S02E05-[gskCj_rKcVs]-Bocal.mp4",
+        "video_segment": {
+            "from": "00:00:47.000",
+            "to": "00:01:02.000",
+            "ms": 15000
+        }
+    },
+    {
+        "youtube_id": "T2rGky-SfnI",
+        "season": "02",
+        "episode": "06",
+        "saintobjet": "Gibier",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E06 - Saint-Gibier [T2rGky-SfnI].mkv",
+        "segment": "S02E06-[T2rGky-SfnI]-Gibier.mp4",
+        "video_segment": {
+            "from": "00:00:44.000",
+            "to": "00:01:05.000",
+            "ms": 21000
+        }
+    },
+    {
+        "youtube_id": "dIQw3UwpPYw",
+        "season": "02",
+        "episode": "07",
+        "saintobjet": "Pare-chocs",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E07 - Saint-Pare-Choc [dIQw3UwpPYw].mkv",
+        "segment": "S02E07-[dIQw3UwpPYw]-Pare-chocs.mp4",
+        "video_segment": {
+            "from": "00:00:33.000",
+            "to": "00:00:44.000",
+            "ms": 11000
+        }
+    },
+    {
+        "youtube_id": "f_d4o8Y01bo",
+        "season": "02",
+        "episode": "08",
+        "saintobjet": "Tranche de jambon",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E08 - Saint-Tranche de jambon [f_d4o8Y01bo].mkv",
+        "segment": "S02E08-[f_d4o8Y01bo]-Tranche de jambon.mp4",
+        "video_segment": {
+            "from": "00:00:33.000",
+            "to": "00:00:46.000",
+            "ms": 13000
+        }
+    },
+    {
+        "youtube_id": "I4y5oz5g0xE",
+        "season": "02",
+        "episode": "09",
+        "saintobjet": "Patate",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E09 - Sainte-Patate [I4y5oz5g0xE].mkv",
+        "segment": "S02E09-[I4y5oz5g0xE]-Patate.mp4",
+        "video_segment": {
+            "from": "00:02:25.060",
+            "to": "00:02:29.460",
+            "ms": 4400
+        }
+    },
+    {
+        "youtube_id": "sktPwfPxlUE",
+        "season": "02",
+        "episode": "10",
+        "saintobjet": "Appareil photo",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E10 - Saint-Appareil photo [sktPwfPxlUE].mkv",
+        "segment": "S02E10-[sktPwfPxlUE]-Appareil de photo.mp4",
+        "video_segment": {
+            "from": "00:01:03.000",
+            "to": "00:01:10.800",
+            "ms": 7800
+        }
+    },
+    {
+        "youtube_id": "z6_JyZy5taY",
+        "season": "02",
+        "episode": "11",
+        "saintobjet": "Raisin sec",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E11 - Saint-Raisin sec [z6_JyZy5taY].mkv",
+        "segment": "S02E11-[z6_JyZy5taY]-Raisin sec.mp4",
+        "video_segment": {
+            "from": "00:02:39.610",
+            "to": "00:02:48.890",
+            "ms": 9280
+        }
+    },
+    {
+        "youtube_id": "T8jY0EBUm3I",
+        "season": "02",
+        "episode": "12",
+        "saintobjet": "Trognon de pomme",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E12 - Saint-Trognon de pomme [T8jY0EBUm3I].mkv",
+        "segment": "S02E12-[T8jY0EBUm3I]-Trognon de pomme.mp4",
+        "video_segment": {
+            "from": "00:03:24.830",
+            "to": "00:03:58.830",
+            "ms": 34000
+        }
+    },
+    {
+        "youtube_id": "D4-DwA8woLU",
+        "season": "02",
+        "episode": "13",
+        "saintobjet": "Fil à couper le beurre",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E13 - Saint-Fil à couper le beurre [D4-DwA8woLU].mkv",
+        "segment": "S02E13-[D4-DwA8woLU]-Fil à couper le beurre.mp4",
+        "video_segment": {
+            "from": "00:00:47.000",
+            "to": "00:00:51.000",
+            "ms": 4000
+        }
+    },
+    {
+        "youtube_id": "ykkCQbkdOIg",
+        "season": "02",
+        "episode": "14",
+        "saintobjet": "Casse-noisette",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E14 - Saint-Casse-Noisette [ykkCQbkdOIg].mkv",
+        "segment": "S02E14-[ykkCQbkdOIg]-Casse-noisette.mp4",
+        "video_segment": {
+            "from": "00:00:36.980",
+            "to": "00:00:43.880",
+            "ms": 6900
+        }
+    },
+    {
+        "youtube_id": "Rmn5oWh4syE",
+        "season": "02",
+        "episode": "15",
+        "saintobjet": "Machine à faire des trous dans les spaghettis",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E15 - Saint-Machine à faire des trous dans les spaghettis [Rmn5oWh4syE].mkv",
+        "segment": "S02E15-[Rmn5oWh4syE]-Machine à faire des trous dans les spaghettis.mp4",
+        "video_segment": {
+            "from": "00:03:07.730",
+            "to": "00:03:16.730",
+            "ms": 9000
+        }
+    },
+    {
+        "youtube_id": "5-VbxobD2cc",
+        "season": "02",
+        "episode": "17",
+        "saintobjet": "Stylo feutre",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E17 - Saint-Stylo-feutre [5-VbxobD2cc].mkv",
+        "segment": "S02E17-[5-VbxobD2cc]-Stylo feutre.mp4",
+        "video_segment": {
+            "from": "00:00:35.000",
+            "to": "00:00:43.000",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "YnT1x-S581U",
+        "season": "02",
+        "episode": "18",
+        "saintobjet": "Parcmètre",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E18 - Saint-Parcmètre [YnT1x-S581U].mkv",
+        "segment": "S02E18-[YnT1x-S581U]-Parcmètre.mp4",
+        "video_segment": {
+            "from": "00:03:06.890",
+            "to": "00:03:10.890",
+            "ms": 4000
+        }
+    },
+    {
+        "youtube_id": "d288ANbpv0A",
+        "season": "02",
+        "episode": "20",
+        "saintobjet": "Toast",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E20 - Saint-Toast [d288ANbpv0A].mkv",
+        "segment": "S02E20-[d288ANbpv0A]-Toast.mp4",
+        "video_segment": {
+            "from": "00:00:33.000",
+            "to": "00:00:49.000",
+            "ms": 16000
+        }
+    },
+    {
+        "youtube_id": "WqdbBVAu_4I",
+        "season": "02",
+        "episode": "21",
+        "saintobjet": "Colis",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E21 - Saint-Colis [WqdbBVAu_4I].mkv",
+        "segment": "S02E21-[WqdbBVAu_4I]-Colis.mp4",
+        "video_segment": {
+            "from": "00:04:08.500",
+            "to": "00:04:13.500",
+            "ms": 5000
+        }
+    },
+    {
+        "youtube_id": "YEBw0AUwvaM",
+        "season": "02",
+        "episode": "22",
+        "saintobjet": "Sèche-cheveux",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E22 - Saint-Sèche-cheveux [YEBw0AUwvaM].mkv",
+        "segment": "S02E22-[YEBw0AUwvaM]-Sèche-cheveux.mp4",
+        "video_segment": {
+            "from": "00:00:33.000",
+            "to": "00:00:44.000",
+            "ms": 11000
+        }
+    },
+    {
+        "youtube_id": "G_SGeiYvamE",
+        "season": "02",
+        "episode": "23",
+        "saintobjet": "Papier carbone",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E23 - Saint-Papier Carbone [G_SGeiYvamE].mkv",
+        "segment": "S02E23-[G_SGeiYvamE]-Papier carbone.mp4",
+        "video_segment": {
+            "from": "00:01:35.000",
+            "to": "00:01:43.500",
+            "ms": 8500
+        }
+    },
+    {
+        "youtube_id": "-Mq7LageVFk",
+        "season": "02",
+        "episode": "24",
+        "saintobjet": "Savonette",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E24 - Saint-Savonnette [-Mq7LageVFk].mkv",
+        "segment": "S02E24-[-Mq7LageVFk]-Savonette.mp4",
+        "video_segment": {
+            "from": "00:00:41.080",
+            "to": "00:00:47.080",
+            "ms": 6000
+        }
+    },
+    {
+        "youtube_id": "YhtH4U--nqM",
+        "season": "02",
+        "episode": "25",
+        "saintobjet": "Épluchure",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E25 - Saint-Épluchure [YhtH4U--nqM].mkv",
+        "segment": "S02E25-[YhtH4U--nqM]-Épluchure.mp4",
+        "video_segment": {
+            "from": "00:01:34.000",
+            "to": "00:01:39.000",
+            "ms": 5000
+        }
+    },
+    {
+        "youtube_id": "VcRHfdbqTW4",
+        "season": "02",
+        "episode": "26",
+        "saintobjet": "Cactus",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E26 - Saint-Cactus [VcRHfdbqTW4].mkv",
+        "segment": "S02E26-[VcRHfdbqTW4]-Cactus.mp4",
+        "video_segment": {
+            "from": "00:00:57.000",
+            "to": "00:01:09.000",
+            "ms": 12000
+        }
+    },
+    {
+        "youtube_id": "J_5Rw4yH0ek",
+        "season": "02",
+        "episode": "27",
+        "saintobjet": "Sac de dame",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E27 - Saint-Sac de dame [J_5Rw4yH0ek].mkv",
+        "segment": "S02E27-[J_5Rw4yH0ek]-Sac de dame.mp4",
+        "video_segment": {
+            "from": "00:01:52.000",
+            "to": "00:01:55.000",
+            "ms": 3000
+        }
+    },
+    {
+        "youtube_id": "yMUyNtYakTQ",
+        "season": "02",
+        "episode": "28",
+        "saintobjet": "Jus de fruits",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E28 - Saint-Jus de fruit [yMUyNtYakTQ].mkv",
+        "segment": "S02E28-[yMUyNtYakTQ]-Jus de fruits.mp4",
+        "video_segment": {
+            "from": "00:01:03.000",
+            "to": "00:01:10.000",
+            "ms": 7000
+        }
+    },
+    {
+        "youtube_id": "dDiRiNZtvHA",
+        "season": "02",
+        "episode": "29",
+        "saintobjet": "Mot d'excuse",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E29 - Saint-Mot d'excuse [dDiRiNZtvHA].mkv",
+        "segment": "S02E29-[dDiRiNZtvHA]-Mot d'excuse.mp4",
+        "video_segment": {
+            "from": "00:02:11.000",
+            "to": "00:02:21.000",
+            "ms": 10000
+        }
+    },
+    {
+        "youtube_id": "mm3jvpopAus",
+        "season": "02",
+        "episode": "32",
+        "saintobjet": "Pique-nique",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E32 - Saint-Pique-nique [mm3jvpopAus].mkv",
+        "segment": "S02E32-[mm3jvpopAus]-Pique-nique.mp4",
+        "video_segment": {
+            "from": "00:00:41.840",
+            "to": "00:00:48.400",
+            "ms": 6560
+        }
+    },
+    {
+        "youtube_id": "o0B0Lh9afLY",
+        "season": "02",
+        "episode": "33",
+        "saintobjet": "Bonbon à la menthe",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E33 - Saint-Bonbon à la menthe [o0B0Lh9afLY].mkv",
+        "segment": "S02E33-[o0B0Lh9afLY]-Bonbon à la menthe.mp4",
+        "video_segment": {
+            "from": "00:00:48.000",
+            "to": "00:00:57.000",
+            "ms": 9000
+        }
+    },
+    {
+        "youtube_id": "cmq1v0V6zWw",
+        "season": "02",
+        "episode": "34",
+        "saintobjet": "Sabre",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E34 - Saint-Sabre [cmq1v0V6zWw].mkv",
+        "segment": "S02E34-[cmq1v0V6zWw]-Sabre.mp4",
+        "video_segment": {
+            "from": "00:00:37.000",
+            "to": "00:00:48.000",
+            "ms": 11000
+        }
+    },
+    {
+        "youtube_id": "dXA5c_GS01A",
+        "season": "02",
+        "episode": "35",
+        "saintobjet": "Uniforme",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E35 - Saint-Uniforme [dXA5c_GS01A].mkv",
+        "segment": "S02E35-[dXA5c_GS01A]-Uniforme.mp4",
+        "video_segment": {
+            "from": "00:00:35.000",
+            "to": "00:00:43.000",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "sTfjG9r0O_o",
+        "season": "02",
+        "episode": "36",
+        "saintobjet": "Bulle de savon",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E36 - Saint-Bulle de savon [sTfjG9r0O_o].mkv",
+        "segment": "S02E36-[sTfjG9r0O_o]-Bulle de savon.mp4",
+        "video_segment": {
+            "from": "00:00:59.000",
+            "to": "00:01:07.000",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "9qRdE6NGILQ",
+        "season": "02",
+        "episode": "39",
+        "saintobjet": "Peau de banane",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E39 - Saint-Peau de banane [9qRdE6NGILQ].mkv",
+        "segment": "S02E39-[9qRdE6NGILQ]-Peau de banane.mp4",
+        "video_segment": {
+            "from": "00:00:33.000",
+            "to": "00:00:44.000",
+            "ms": 11000
+        }
+    },
+    {
+        "youtube_id": "oFWLnDolceI",
+        "season": "02",
+        "episode": "41",
+        "saintobjet": "Avion en papier",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E41 - Saint-Avion en papier [oFWLnDolceI].mkv",
+        "segment": "S02E41-[oFWLnDolceI]-Avion en papier.mp4",
+        "video_segment": {
+            "from": "00:00:34.080",
+            "to": "00:00:51.080",
+            "ms": 17000
+        }
+    },
+    {
+        "youtube_id": "RZB02VCDLCU",
+        "season": "02",
+        "episode": "42",
+        "saintobjet": "Brosse à cheveux",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E42 - Saint-Brosse à cheveux [RZB02VCDLCU].mkv",
+        "segment": "S02E42-[RZB02VCDLCU]-Brosse à cheveux.mp4",
+        "video_segment": {
+            "from": "00:01:24.860",
+            "to": "00:01:28.860",
+            "ms": 4000
+        }
+    },
+    {
+        "youtube_id": "TA5rzEVfPSw",
+        "season": "02",
+        "episode": "43",
+        "saintobjet": "Équilibre",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E43 - Saint-Équilibre [TA5rzEVfPSw].mkv",
+        "segment": "S02E43-[TA5rzEVfPSw]-Équilibre.mp4",
+        "video_segment": {
+            "from": "00:01:08.500",
+            "to": "00:01:21.000",
+            "ms": 12500
+        }
+    },
+    {
+        "youtube_id": "338OPhDGDMs",
+        "season": "02",
+        "episode": "44",
+        "saintobjet": "Théière",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E44 - Saint-Théière [338OPhDGDMs].mkv",
+        "segment": "S02E44-[338OPhDGDMs]-Théière.mp4",
+        "video_segment": {
+            "from": "00:00:36.000",
+            "to": "00:00:44.000",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "RfPKU3Kzb28",
+        "season": "02",
+        "episode": "45",
+        "saintobjet": "Porte-monnaie",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E45 - Saint-Porte-monnaie [RfPKU3Kzb28].mkv",
+        "segment": "S02E45-[RfPKU3Kzb28]-Porte-monnaie.mp4",
+        "video_segment": {
+            "from": "00:00:35.000",
+            "to": "00:00:43.000",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "fcoIrio5DaE",
+        "season": "02",
+        "episode": "46",
+        "saintobjet": "Pince à épiler",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E46 - Saint-Pince à épiler [fcoIrio5DaE].mkv",
+        "segment": "S02E46-[fcoIrio5DaE]-Pince à épiler.mp4",
+        "video_segment": {
+            "from": "00:00:36.000",
+            "to": "00:00:45.000",
+            "ms": 9000
+        }
+    },
+    {
+        "youtube_id": "1Gn-6JrZqic",
+        "season": "02",
+        "episode": "48",
+        "saintobjet": "Cheminée d'usine",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E48 - Saint-Cheminée d'usine [1Gn-6JrZqic].mkv",
+        "segment": "S02E48-[1Gn-6JrZqic]-Cheminée d'usine.mp4",
+        "video_segment": {
+            "from": "00:02:49.110",
+            "to": "00:03:02.910",
+            "ms": 13800
+        }
+    },
+    {
+        "youtube_id": "VQnNVdEJSjc",
+        "season": "02",
+        "episode": "49",
+        "saintobjet": "Farces et attrapes",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E49 - Saint-Farce et attrape [VQnNVdEJSjc].mkv",
+        "segment": "S02E49-[VQnNVdEJSjc]-Farces et attrapes.mp4",
+        "video_segment": {
+            "from": "00:00:35.000",
+            "to": "00:00:49.000",
+            "ms": 14000
+        }
+    },
+    {
+        "youtube_id": "DgKPXLdr2pE",
+        "season": "02",
+        "episode": "50",
+        "saintobjet": "Gant de boxe",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E50 - Saint-Gant de boxe [DgKPXLdr2pE].mkv",
+        "segment": "S02E50-[DgKPXLdr2pE]-Gant de boxe.mp4",
+        "video_segment": {
+            "from": "00:00:37.000",
+            "to": "00:00:42.000",
+            "ms": 5000
+        }
+    },
+    {
+        "youtube_id": "oGvt-VhrYM0",
+        "season": "02",
+        "episode": "51",
+        "saintobjet": "Cible",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E51 - Saint-Cible [oGvt-VhrYM0].mkv",
+        "segment": "S02E51-[oGvt-VhrYM0]-Cible.mp4",
+        "video_segment": {
+            "from": "00:02:37.530",
+            "to": "00:02:43.930",
+            "ms": 6400
+        }
+    },
+    {
+        "youtube_id": "lQBM7kfvWws",
+        "season": "02",
+        "episode": "52",
+        "saintobjet": "Carte de crédit",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E52 - Saint-Carte de crédit [lQBM7kfvWws].mkv",
+        "segment": "S02E52-[lQBM7kfvWws]-Carte de crédit.mp4",
+        "video_segment": {
+            "from": "00:00:49.000",
+            "to": "00:00:56.000",
+            "ms": 7000
+        }
+    },
+    {
+        "youtube_id": "mBB_LmNczc8",
+        "season": "02",
+        "episode": "53",
+        "saintobjet": "Ciseaux",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E53 - Saint-Ciseaux [mBB_LmNczc8].mkv",
+        "segment": "S02E53-[mBB_LmNczc8]-Ciseaux.mp4",
+        "video_segment": {
+            "from": "00:04:04.290",
+            "to": "00:04:16.290",
+            "ms": 12000
+        }
+    },
+    {
+        "youtube_id": "9As13thkTfQ",
+        "season": "02",
+        "episode": "54",
+        "saintobjet": "Boule de glace",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E54 - Saint-Boule de glace [9As13thkTfQ].mkv",
+        "segment": "S02E54-[9As13thkTfQ]-Boule de glace.mp4",
+        "video_segment": {
+            "from": "00:01:41.000",
+            "to": "00:01:49.000",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "ChVh0FNtQ6U",
+        "season": "02",
+        "episode": "55",
+        "saintobjet": "Chanson",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E55 - Saint-Chanson [ChVh0FNtQ6U].mkv",
+        "segment": "S02E55-[ChVh0FNtQ6U]-Chanson.mp4",
+        "video_segment": {
+            "from": "00:00:36.000",
+            "to": "00:00:44.000",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "B8JPIYRdLwk",
+        "season": "02",
+        "episode": "56",
+        "saintobjet": "Gant de toilette",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E56 - Saint-Gant de toilette [B8JPIYRdLwk].mkv",
+        "segment": "S02E56-[B8JPIYRdLwk]-Gant de toilette.mp4",
+        "video_segment": {
+            "from": "00:04:12.190",
+            "to": "00:04:17.190",
+            "ms": 5000
+        }
+    },
+    {
+        "youtube_id": "036ZtbCyO2E",
+        "season": "02",
+        "episode": "57",
+        "saintobjet": "Machine à écrire",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E57 - Saint-Machine à écrire [036ZtbCyO2E].mkv",
+        "segment": "S02E57-[036ZtbCyO2E]-Machine à écrire.mp4",
+        "video_segment": {
+            "from": "00:00:33.000",
+            "to": "00:00:46.000",
+            "ms": 13000
+        }
+    },
+    {
+        "youtube_id": "F5FrlQI4Ej8",
+        "season": "02",
+        "episode": "58",
+        "saintobjet": "Cravate",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E58 - Saint-Cravate [F5FrlQI4Ej8].mkv",
+        "segment": "S02E58-[F5FrlQI4Ej8]-Cravate.mp4",
+        "video_segment": {
+            "from": "00:00:40.800",
+            "to": "00:00:45.500",
+            "ms": 4700
+        }
+    },
+    {
+        "youtube_id": "9NCJHQ02c-k",
+        "season": "02",
+        "episode": "59",
+        "saintobjet": "Cruche",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E59 - Saint-Cruche [9NCJHQ02c-k].mkv",
+        "segment": "S02E59-[9NCJHQ02c-k]-Cruche.mp4",
+        "video_segment": {
+            "from": "00:00:34.000",
+            "to": "00:00:52.000",
+            "ms": 18000
+        }
+    },
+    {
+        "youtube_id": "iz9M1oWZm3g",
+        "season": "02",
+        "episode": "60",
+        "saintobjet": "Bande dessinée",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E60 - Saint-Bande dessinée [iz9M1oWZm3g].mkv",
+        "segment": "S02E60-[iz9M1oWZm3g]-Bande dessinée.mp4",
+        "video_segment": {
+            "from": "00:04:15.090",
+            "to": "00:04:21.090",
+            "ms": 6000
+        }
+    },
+    {
+        "youtube_id": "e5j_02idhMQ",
+        "season": "02",
+        "episode": "61",
+        "saintobjet": "Morceau de bois",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E61 - Saint-Morceau de bois [e5j_02idhMQ].mkv",
+        "segment": "S02E61-[e5j_02idhMQ]-Morceau de bois.mp4",
+        "video_segment": {
+            "from": "00:00:33.640",
+            "to": "00:00:43.940",
+            "ms": 10300
+        }
+    },
+    {
+        "youtube_id": "xsSfSqf_aIY",
+        "season": "02",
+        "episode": "62",
+        "saintobjet": "Couche culotte",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S02E62 - Saint-Couche-culotte [xsSfSqf_aIY].mkv",
+        "segment": "S02E62-[xsSfSqf_aIY]-Couche culotte.mp4",
+        "video_segment": {
+            "from": "00:03:27.820",
+            "to": "00:03:33.820",
+            "ms": 6000
+        }
+    },
+    {
+        "youtube_id": "SoZ2cRjNTqE",
+        "season": "02",
+        "episode": "63",
+        "saintobjet": "Pare-chocs",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E63 - Saint-Pare-choc [SoZ2cRjNTqE].mkv",
+        "segment": "S02E63-[SoZ2cRjNTqE]-Pare-chocs.mp4",
+        "video_segment": {
+            "from": "00:04:28.450",
+            "to": "00:04:33.250",
+            "ms": 4800
+        }
+    },
+    {
+        "youtube_id": "b1mHsb2Vagc",
+        "season": "02",
+        "episode": "64",
+        "saintobjet": "Fromage",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E64 - Saint-Fromage [b1mHsb2Vagc].mkv",
+        "segment": "S02E64-[b1mHsb2Vagc]-Fromage.mp4",
+        "video_segment": {
+            "from": "00:00:37.000",
+            "to": "00:00:47.000",
+            "ms": 10000
+        }
+    },
+    {
+        "youtube_id": "DWbRsSwDAtk",
+        "season": "02",
+        "episode": "72",
+        "saintobjet": "Plâtre",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E72 - Saint-Plâtre [DWbRsSwDAtk].mkv",
+        "segment": "S02E72-[DWbRsSwDAtk]-Plâtre.mp4",
+        "video_segment": {
+            "from": "00:00:37.000",
+            "to": "00:00:42.000",
+            "ms": 5000
+        }
+    },
+    {
+        "youtube_id": "UKQRf6T7yec",
+        "season": "02",
+        "episode": "73",
+        "saintobjet": "Tapis",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E73 - Saint-Tapis [UKQRf6T7yec].mkv",
+        "segment": "S02E73-[UKQRf6T7yec]-Tapis.mp4",
+        "video_segment": {
+            "from": "00:00:36.000",
+            "to": "00:00:42.000",
+            "ms": 6000
+        }
+    },
+    {
+        "youtube_id": "GBqItKOVz_8",
+        "season": "02",
+        "episode": "74",
+        "saintobjet": "Poids",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E74 - Saint-Poids [GBqItKOVz_8].mkv",
+        "segment": "S02E74-[GBqItKOVz_8]-Poids.mp4",
+        "video_segment": {
+            "from": "00:00:33.000",
+            "to": "00:00:46.000",
+            "ms": 13000
+        }
+    },
+    {
+        "youtube_id": "Sm9NBDD0M0M",
+        "season": "02",
+        "episode": "75",
+        "saintobjet": "Biberon",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E75 - Saint-Biberon [Sm9NBDD0M0M].mkv",
+        "segment": "S02E75-[Sm9NBDD0M0M]-Biberon.mp4",
+        "video_segment": {
+            "from": "00:02:45.170",
+            "to": "00:02:54.170",
+            "ms": 9000
+        }
+    },
+    {
+        "youtube_id": "PvqaXFQETXQ",
+        "season": "02",
+        "episode": "76",
+        "saintobjet": "Médicament",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E76 - Saint-Médicament [PvqaXFQETXQ].mkv",
+        "segment": "S02E76-[PvqaXFQETXQ]-Médicament.mp4",
+        "video_segment": {
+            "from": "00:00:41.000",
+            "to": "00:00:45.000",
+            "ms": 4000
+        }
+    },
+    {
+        "youtube_id": "P8J2mSaCwpY",
+        "season": "02",
+        "episode": "78",
+        "saintobjet": "Gadget",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S02E78 - Saint-Gadget [P8J2mSaCwpY].mkv",
+        "segment": "S02E78-[P8J2mSaCwpY]-Gadget.mp4",
+        "video_segment": {
+            "from": "00:04:16.690",
+            "to": "00:04:22.690",
+            "ms": 6000
+        }
+    },
+    {
+        "youtube_id": "phjsgozdC4w",
+        "season": "03",
+        "episode": "02",
+        "saintobjet": "Caramel mou",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03E02 - Saint-Caramel mou [phjsgozdC4w].mkv",
+        "segment": "S03E02-[phjsgozdC4w]-Caramel mou.mp4",
+        "video_segment": {
+            "from": "00:04:08.710",
+            "to": "00:04:14.510",
+            "ms": 5800
+        }
+    },
+    {
+        "youtube_id": "q4DchaDcS9c",
+        "season": "03",
+        "episode": "03",
+        "saintobjet": "Bronzage",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03E03 - Saint-Bronzage [q4DchaDcS9c].mkv",
+        "segment": "S03E03-[q4DchaDcS9c]-Bronzage.mp4",
+        "video_segment": {
+            "from": "00:00:34.600",
+            "to": "00:00:42.600",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "U_ZPX0Y61Dc",
+        "season": "03",
+        "episode": "08",
+        "saintobjet": "Motte de terre",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S03E08 - Saint-Motte de terre [U_ZPX0Y61Dc].mkv",
+        "segment": "S03E08-[U_ZPX0Y61Dc]-Motte de terre.mp4",
+        "video_segment": {
+            "from": "00:00:24.000",
+            "to": "00:00:36.000",
+            "ms": 12000
+        }
+    },
+    {
+        "youtube_id": "8hqVqifAY-s",
+        "season": "03",
+        "episode": "10",
+        "saintobjet": "Petit bateau",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03E10 - Saint-Petit bateau [8hqVqifAY-s].mkv",
+        "segment": "S03E10-[8hqVqifAY-s]-Petit bateau.mp4",
+        "video_segment": {
+            "from": "00:00:23.000",
+            "to": "00:00:28.000",
+            "ms": 5000
+        }
+    },
+    {
+        "youtube_id": "iU7qr2B8IYc",
+        "season": "03",
+        "episode": "11",
+        "saintobjet": "Foie",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03E11 - Saint-Foi [iU7qr2B8IYc].mkv",
+        "segment": "S03E11-[iU7qr2B8IYc]-Foie.mp4",
+        "video_segment": {
+            "from": "00:00:30.500",
+            "to": "00:00:36.040",
+            "ms": 5540
+        }
+    },
+    {
+        "youtube_id": "TX8OKdHz8zo",
+        "season": "03",
+        "episode": "15",
+        "saintobjet": "Vieille boîte",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S03E15 - Saint-Vieille boite [TX8OKdHz8zo].mkv",
+        "segment": "S03E15-[TX8OKdHz8zo]-Vieille boîte.mp4",
+        "video_segment": {
+            "from": "00:01:48.440",
+            "to": "00:01:55.440",
+            "ms": 7000
+        }
+    },
+    {
+        "youtube_id": "Ko5DITRGsjk",
+        "season": "03",
+        "episode": "16",
+        "saintobjet": "Abcès",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03E16 - Saint-Abcès [Ko5DITRGsjk].mkv",
+        "segment": "S03E16-[Ko5DITRGsjk]-Abcès.mp4",
+        "video_segment": {
+            "from": "00:00:31.000",
+            "to": "00:00:37.600",
+            "ms": 6600
+        }
+    },
+    {
+        "youtube_id": "7yRRTJTI-8Q",
+        "season": "03",
+        "episode": "17",
+        "saintobjet": "T-shirt",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03E17 - Saint-T-shirt [7yRRTJTI-8Q].mkv",
+        "segment": "S03E17-[7yRRTJTI-8Q]-T-shirt.mp4",
+        "video_segment": {
+            "from": "00:00:36.000",
+            "to": "00:00:40.100",
+            "ms": 4100
+        }
+    },
+    {
+        "youtube_id": "v1nwctMUN2g",
+        "season": "03",
+        "episode": "20",
+        "saintobjet": "Jet d'eau",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP20 [v1nwctMUN2g].mkv",
+        "segment": "S03E20-[v1nwctMUN2g]-Jet d'eau.mp4",
+        "video_segment": {
+            "from": "00:00:23.520",
+            "to": "00:00:29.120",
+            "ms": 5600
+        }
+    },
+    {
+        "youtube_id": "wlhm6aYDKhE",
+        "season": "03",
+        "episode": "21",
+        "saintobjet": "Téléphone",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP21 [wlhm6aYDKhE].mkv",
+        "segment": "S03E21-[wlhm6aYDKhE]-Téléphone.mp4",
+        "video_segment": {
+            "from": "00:00:22.540",
+            "to": "00:00:36.700",
+            "ms": 14160
+        }
+    },
+    {
+        "youtube_id": "e9-hffipOIM",
+        "season": "03",
+        "episode": "22",
+        "saintobjet": "Chapeau",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP22 [e9-hffipOIM].mkv",
+        "segment": "S03E22-[e9-hffipOIM]-Chapeau.mp4",
+        "video_segment": {
+            "from": "00:00:22.000",
+            "to": "00:00:32.460",
+            "ms": 10460
+        }
+    },
+    {
+        "youtube_id": "B4A00R4YGTQ",
+        "season": "03",
+        "episode": "23",
+        "saintobjet": "Flash",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP23 [B4A00R4YGTQ].mkv",
+        "segment": "S03E23-[B4A00R4YGTQ]-Flash.mp4",
+        "video_segment": {
+            "from": "00:01:48.000",
+            "to": "00:01:54.000",
+            "ms": 6000
+        }
+    },
+    {
+        "youtube_id": "-SstvlWayQ8",
+        "season": "03",
+        "episode": "26",
+        "saintobjet": "Coquetier",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP26 [-SstvlWayQ8].mkv",
+        "segment": "S03E26-[-SstvlWayQ8]-Coquetier.mp4",
+        "video_segment": {
+            "from": "00:00:23.000",
+            "to": "00:00:29.000",
+            "ms": 6000
+        }
+    },
+    {
+        "youtube_id": "MeYz_GL52QI",
+        "season": "03",
+        "episode": "27",
+        "saintobjet": "Bon petit plat mijoté",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP27 [MeYz_GL52QI].mkv",
+        "segment": "S03E27-[MeYz_GL52QI]-Bon petit plat mijoté.mp4",
+        "video_segment": {
+            "from": "00:01:22.000",
+            "to": "00:01:29.000",
+            "ms": 7000
+        }
+    },
+    {
+        "youtube_id": "SgPbjinBYjk",
+        "season": "03",
+        "episode": "28",
+        "saintobjet": "Bouchon de champagne",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP28 [SgPbjinBYjk].mkv",
+        "segment": "S03E28-[SgPbjinBYjk]-Bouchon de champagne.mp4",
+        "video_segment": {
+            "from": "00:00:23.100",
+            "to": "00:00:35.100",
+            "ms": 12000
+        }
+    },
+    {
+        "youtube_id": "y5euN6Bu9iQ",
+        "season": "03",
+        "episode": "29",
+        "saintobjet": "Couvercle",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP29 [y5euN6Bu9iQ].mkv",
+        "segment": "S03E29-[y5euN6Bu9iQ]-Couvercle.mp4",
+        "video_segment": {
+            "from": "00:00:23.440",
+            "to": "00:00:28.600",
+            "ms": 5160
+        }
+    },
+    {
+        "youtube_id": "w_KYK7qy4uM",
+        "season": "03",
+        "episode": "30",
+        "saintobjet": "Aiguille",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S03EP30 [w_KYK7qy4uM].mkv",
+        "segment": "S03E30-[w_KYK7qy4uM]-Aiguille.mp4",
+        "video_segment": {
+            "from": "00:00:23.000",
+            "to": "00:00:29.800",
+            "ms": 6800
+        }
+    },
+    {
+        "youtube_id": "LRfgt2s5pz0",
+        "season": "03",
+        "episode": "31",
+        "saintobjet": "Bon cœur",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP31 [LRfgt2s5pz0].mkv",
+        "segment": "S03E31-[LRfgt2s5pz0]-Bon cœur.mp4",
+        "video_segment": {
+            "from": "00:03:17.070",
+            "to": "00:03:22.870",
+            "ms": 5800
+        }
+    },
+    {
+        "youtube_id": "5gQGbwbh6ss",
+        "season": "03",
+        "episode": "33",
+        "saintobjet": "Nœuds dans les mouchoirs",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP33 [5gQGbwbh6ss].mkv",
+        "segment": "S03E33-[5gQGbwbh6ss]-Nœuds dans les mouchoirs.mp4",
+        "video_segment": {
+            "from": "00:00:22.000",
+            "to": "00:00:31.500",
+            "ms": 9500
+        }
+    },
+    {
+        "youtube_id": "7ST1WisI8VY",
+        "season": "03",
+        "episode": "34",
+        "saintobjet": "Passeport",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP34 [7ST1WisI8VY].mkv",
+        "segment": "S03E34-[7ST1WisI8VY]-Passeport.mp4",
+        "video_segment": {
+            "from": "00:00:21.800",
+            "to": "00:00:29.800",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "b2o_UIvLZnw",
+        "season": "03",
+        "episode": "36",
+        "saintobjet": "Symptôme",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP36 [b2o_UIvLZnw].mkv",
+        "segment": "S03E36-[b2o_UIvLZnw]-Symptôme.mp4",
+        "video_segment": {
+            "from": "00:01:51.000",
+            "to": "00:01:59.500",
+            "ms": 8500
+        }
+    },
+    {
+        "youtube_id": "-LH6331t9ZM",
+        "season": "03",
+        "episode": "37",
+        "saintobjet": "Addition de restaurant",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S03EP37 [-LH6331t9ZM].mkv",
+        "segment": "S03E37-[-LH6331t9ZM]-Addition de restaurant.mp4",
+        "video_segment": {
+            "from": "00:00:29.800",
+            "to": "00:00:35.800",
+            "ms": 6000
+        }
+    },
+    {
+        "youtube_id": "2CaT-8Yq-ag",
+        "season": "03",
+        "episode": "38",
+        "saintobjet": "Pavé",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP38 [2CaT-8Yq-ag].mkv",
+        "segment": "S03E38-[2CaT-8Yq-ag]-Pavé.mp4",
+        "video_segment": {
+            "from": "00:02:18.000",
+            "to": "00:02:24.600",
+            "ms": 6600
+        }
+    },
+    {
+        "youtube_id": "j2odMb5tz-I",
+        "season": "03",
+        "episode": "39",
+        "saintobjet": "Flûte à bec",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S03EP39 [j2odMb5tz-I].mkv",
+        "segment": "S03E39-[j2odMb5tz-I]-Flûte à bec.mp4",
+        "video_segment": {
+            "from": "00:00:35.000",
+            "to": "00:00:40.900",
+            "ms": 5900
+        }
+    },
+    {
+        "youtube_id": "bcxckXEg9Uw",
+        "season": "03",
+        "episode": "40",
+        "saintobjet": "Mégaphone",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP40 [bcxckXEg9Uw].mkv",
+        "segment": "S03E40-[bcxckXEg9Uw]-Mégaphone.mp4",
+        "video_segment": {
+            "from": "00:00:33.720",
+            "to": "00:00:42.000",
+            "ms": 8280
+        }
+    },
+    {
+        "youtube_id": "UjZZfzGwIHw",
+        "season": "03",
+        "episode": "45",
+        "saintobjet": "Mot d'excuse",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP45 [UjZZfzGwIHw].mkv",
+        "segment": "S03E45-[UjZZfzGwIHw]-Mot d'excuse.mp4",
+        "video_segment": {
+            "from": "00:03:51.820",
+            "to": "00:04:00.420",
+            "ms": 8600
+        }
+    },
+    {
+        "youtube_id": "vgbMa9laxvY",
+        "season": "03",
+        "episode": "48",
+        "saintobjet": "Portrait",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP48 [vgbMa9laxvY].mkv",
+        "segment": "S03E48-[vgbMa9laxvY]-Portrait.mp4",
+        "video_segment": {
+            "from": "00:00:40.600",
+            "to": "00:00:49.060",
+            "ms": 8460
+        }
+    },
+    {
+        "youtube_id": "uL71GQcQyK8",
+        "season": "03",
+        "episode": "51",
+        "saintobjet": "Nougat",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP51 [uL71GQcQyK8].mp4",
+        "segment": "S03E51-[uL71GQcQyK8]-Nougat.mp4",
+        "video_segment": {
+            "from": "00:00:28.000",
+            "to": "00:00:42.000",
+            "ms": 14000
+        }
+    },
+    {
+        "youtube_id": "xKdFJB7e-PM",
+        "season": "03",
+        "episode": "52",
+        "saintobjet": "Jouet cassé",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP52 [xKdFJB7e-PM].mkv",
+        "segment": "S03E52-[xKdFJB7e-PM]-Jouet cassé.mp4",
+        "video_segment": {
+            "from": "00:03:48.790",
+            "to": "00:03:53.990",
+            "ms": 5200
+        }
+    },
+    {
+        "youtube_id": "3kGiuLTxRFE",
+        "season": "03",
+        "episode": "53",
+        "saintobjet": "Boîte à maquillage",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S03EP53 [3kGiuLTxRFE].mp4",
+        "segment": "S03E53-[3kGiuLTxRFE]-Boîte à maquillage.mp4",
+        "video_segment": {
+            "from": "00:00:24.200",
+            "to": "00:00:33.800",
+            "ms": 9600
+        }
+    },
+    {
+        "youtube_id": "GhbP6oBcpiE",
+        "season": "03",
+        "episode": "55",
+        "saintobjet": "Diapositive",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S03EP55 [GhbP6oBcpiE].mp4",
+        "segment": "S03E55-[GhbP6oBcpiE]-Diapositive.mp4",
+        "video_segment": {
+            "from": "00:00:38.000",
+            "to": "00:00:46.000",
+            "ms": 8000
+        }
+    },
+    {
+        "youtube_id": "RB0kcGf8FBw",
+        "season": "03",
+        "episode": "57",
+        "saintobjet": "Chaise percée",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S03EP57 [RB0kcGf8FBw].mp4",
+        "segment": "S03E57-[RB0kcGf8FBw]-Chaise percée.mp4",
+        "video_segment": {
+            "from": "00:00:41.000",
+            "to": "00:00:57.000",
+            "ms": 16000
+        }
+    },
+    {
+        "youtube_id": "oHNXHD54UD4",
+        "season": "03",
+        "episode": "64",
+        "saintobjet": "Ruban adhésif transparent",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP64 [oHNXHD54UD4].mp4",
+        "segment": "S03E64-[oHNXHD54UD4]-Ruban adhésif transparent.mp4",
+        "video_segment": {
+            "from": "00:00:22.720",
+            "to": "00:00:33.160",
+            "ms": 10440
+        }
+    },
+    {
+        "youtube_id": "wDukVuOyyoA",
+        "season": "03",
+        "episode": "67",
+        "saintobjet": "Gant",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP67 [wDukVuOyyoA].mp4",
+        "segment": "S03E67-[wDukVuOyyoA]-Gant.mp4",
+        "video_segment": {
+            "from": "00:00:23.000",
+            "to": "00:00:46.000",
+            "ms": 23000
+        }
+    },
+    {
+        "youtube_id": "9ZVhKmmUKhg",
+        "season": "03",
+        "episode": "68",
+        "saintobjet": "Ballon ovale",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP68 [9ZVhKmmUKhg].mp4",
+        "segment": "S03E68-[9ZVhKmmUKhg]-Ballon ovale.mp4",
+        "video_segment": {
+            "from": "00:04:03.940",
+            "to": "00:04:09.860",
+            "ms": 5920
+        }
+    },
+    {
+        "youtube_id": "-5IdiAo275M",
+        "season": "03",
+        "episode": "72",
+        "saintobjet": "Petite boulette",
+        "genre": "m",
+        "src": "./episodes/Téléchat - S03EP72 [-5IdiAo275M].mp4",
+        "segment": "S03E72-[-5IdiAo275M]-Petite boulette.mp4",
+        "txt": "txt/Téléchat - S03EP72 [-5IdiAo275M].mp4.txt",
+        "wav": "wav/Téléchat - S03EP72 [-5IdiAo275M].mp4.wav",
+        "video_segment": {
+            "from": "00:02:02.500",
+            "to": "00:02:07.600",
+            "ms": 5100
+        }
+    },
+    {
+        "youtube_id": "HuzhWJXrDeo",
+        "season": "03",
+        "episode": "78",
+        "saintobjet": "Surprise",
+        "genre": "f",
+        "src": "./episodes/Téléchat - S03EP78 [HuzhWJXrDeo].mp4",
+        "segment": "S03E78-[HuzhWJXrDeo]-Surprise.mp4",
+        "video_segment": {
+            "from": "00:04:08.740",
+            "to": "00:04:14.240",
+            "ms": 5500
+        }
+    }
+]

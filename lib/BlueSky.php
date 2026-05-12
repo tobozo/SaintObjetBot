@@ -18,6 +18,8 @@ class BlueskyApi
   private ?string $accountDid = null;
   private ?string $apiKey = null;
   private string $apiUri;
+  private $session = null;
+  private string $defaultApiHost = '';
 
   public function __construct(?string $handle = null, ?string $app_password = null, string $api_uri = 'https://bsky.social/xrpc/')
   {
@@ -41,6 +43,43 @@ class BlueskyApi
       $this->apiKey = $data['accessJwt'];
     }
   }
+
+
+
+  // TODO
+  public function getFollowersCount() { return 0; }
+  public function getCachedFollowers() { return []; }
+  public function getFollowers() { return []; }
+
+
+
+  public function getSession()
+  {
+    if($this->session == null )
+      $data = $this->request('GET', 'com.atproto.server.getSession');
+
+    if (empty($data->error))
+      $this->session = $data;
+    else
+      $this->session = null;
+
+    return $this->session;
+  }
+
+
+  public function getSessionHost(): string
+  {
+    if (($this->session) && (isset($this->session['didDoc'])) && (is_array($this->session['didDoc']['service']))) {
+      foreach ($this->session['didDoc']['service'] as $service) {
+        if (!empty($service['serviceEndpoint'])) {
+          return sanitizeApiHost($service['serviceEndpoint']);
+        }
+      }
+    }
+
+    return $this->defaultApiHost;
+  }
+
 
   /**
   * Get the current account DID
@@ -95,9 +134,19 @@ class BlueskyApi
   * @return mixed|object
   * @throws \JsonException
   */
-  public function request(string $type, string $request, array $args = [], ?string $body = null, string $content_type = null)
+  public function request(string $type, string $request, array $args = [], ?string $body = null, string $content_type = null, ?string $endpoint_host = null, ?string $token = null)
   {
-    $url = $this->apiUri . $request;
+    if ($endpoint_host)
+    {
+      $endpoint_host = sanitizeApiHost($endpoint_host);
+      if( $endpoint_host )
+        $endpoint_host = 'https://'.$endpoint_host.'/xrpc/';
+    }
+
+
+    $url = ($endpoint_host ?: $this->apiUri) . $request;
+
+    echo $url.PHP_EOL;
 
     if (($type === 'GET') && (count($args))) {
       $url .= '?' . http_build_query($args);
@@ -106,8 +155,11 @@ class BlueskyApi
     }
 
     $headers = [];
-    if ($this->apiKey) {
-      $headers[] = 'Authorization: Bearer ' . $this->apiKey;
+
+    if ($token) {
+      $headers[] = 'Authorization: Bearer ' . $token;
+    } else {
+      $headers[] = 'Authorization: Bearer ' . $this->apiKey;;
     }
 
     if ($content_type) {
@@ -178,17 +230,13 @@ class BlueSkyStatus
   private $session = NULL;
   private $api = NULL;
 
-
-  public function __construct($username, $pass)
+  public function __construct(BlueskyApi $api)
   {
-    $this->api = new BlueskyApi($username, $pass);
+    $this->api = $api;
     if( ! $this->api->getAccountDid() ) php_die("Unable to get account id".PHP_EOL);
   }
 
-
   // https://bluesky.api.stdlib.com/feed@0.1.0/posts/list/timeline/
-
-
 
 
   public function getEmbedCard( $url)
@@ -333,63 +381,189 @@ class BlueSkyStatus
   }
 
 
-
-
-  public function publish( $text )
+  public function getEmbedVideo($video_ary)
   {
-    $this->checkDupe( $text );
-    //Get the URL from the text
+    if(!isset($video_ary['path']) || !file_exists($video_ary['path']))
+    {
+      return false;
+    }
+
+    $body = file_get_contents($video_ary['path']);
+    $mime_type = mime_content_type($video_ary['path']);
+
+    $sess = $this->api->getSession();
+
+    // GET TOKEN FOR HALF HOUR
+    $args = [
+      'aud' => 'did:web:' . $this->api->getSessionHost(),
+      'lxm' => 'com.atproto.repo.uploadBlob',
+      'exp' => strtotime('+30 minutes'),
+    ];
+
+    $response = $this->api->request('GET', 'com.atproto.server.getServiceAuth', $args);
+
+    if(empty($response['token']))
+    {
+      echo "No response token".PHP_EOL;
+      return null;
+    }
+
+    //print_r($sess);
+    //print_r($response);
+
+    $post_url = ('app.bsky.video.uploadVideo?did=' . $this->api->getAccountDid() . '&name=video.mp4' /*. rawurlencode(basename($video_ary['path']))*/ );
+
+    $response = $this->api->request('POST', $post_url, [], $body, $mime_type, 'video.bsky.app', $response['token']);
+
+    $video = null;
+
+    //print_r($response);exit;
+    if(!isset($response['jobId']))
+    {
+      echo "No job id".PHP_EOL;
+      print_r($response);
+      return null;
+    }
+
+    if ($job_id = $response['jobId']) {
+      $args = [
+        'jobId' => $job_id,
+      ];
+
+      do {
+        sleep(3);
+        $response = $this->api->request('GET', 'app.bsky.video.getJobStatus', $args, null, null, 'video.bsky.app');
+      } while ($response['jobStatus']['state'] !== 'JOB_STATE_COMPLETED');
+
+      $video = $response['jobStatus']['blob'];
+    }
+
+    if($video === null)
+    {
+      echo "Video upload failed".PHP_EOL;
+      return null;
+    }
+
+    //print_r($response);
+
+    return [
+      '$type' => 'app.bsky.embed.video',
+      'aspectRatio' => [
+        'width'  => (int)$video_ary['width'],
+        'height' => (int)$video_ary['height'],
+      ],
+      'alt'   => $video_ary['title'],
+      'video' => $video,
+    ];
+
+  }
+
+
+  public function publish( $text, $video_ary = null )
+  {
+
+    $args = [
+      'collection' => 'app.bsky.feed.post',
+      'repo' => $this->api->getAccountDid(),
+      'record' => [
+        'text'      => $text,
+        "langs"     => [$this->lang],
+        'createdAt' => date('c'),
+        '$type' => 'app.bsky.feed.post'
+      ],
+    ];
+
     preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $text, $matches);
 
-    if (!empty($matches[0][0]) ) {
-
+    if (!empty($matches[0][0]) )
+    {
       $url  = $matches[0][0];
-      //$text = trim(preg_replace('/#\w+\s*/', '', $text)); // remove hashtags, trim
+      $args['record']["facets"] = [[
+        "index"      => [
+          "byteStart"  =>  strpos($text,'https:'),
+          "byteEnd"    =>  (strpos($text,'https:')+strlen($url))
+        ],
+        "features"   =>  [[
+          "uri"        =>  $url,
+          '$type'      =>  "app.bsky.richtext.facet#link"
+        ]]
+      ]];
+    }
 
-      $args = [
-        "repo"       => $this->api->getAccountDid(),
-        "collection" => "app.bsky.feed.post",
-        "record"     => [
-          '$type'      => "app.bsky.feed.post",
-          "langs"      => [$this->lang],
-          "createdAt"  => date("c"),
-          "text"       => $text,
-          "facets"     => [[
-            "index"      => [
-              "byteStart"  =>  strpos($text,'https:'),
-              "byteEnd"    =>  (strpos($text,'https:')+strlen($url))
-            ],
-            "features"   =>  [[
-              "uri"        =>  $url,
-              '$type'      =>  "app.bsky.richtext.facet#link"
-            ]]
-          ]]
-        ]
-      ];
-
-      $embed = $this->getEmbedCard($url);
-
-      if( $embed ) {
+    if( $video_ary !== null )
+    {
+      $embed = $this->getEmbedVideo($video_ary);
+      if($embed!==null)
+      {
         $args['record']['embed'] = $embed;
+        print_r($args);
       }
-
-    } else {
-      // We won't try to do anything clever with this
-
-      $args = [
-        "repo"       => $this->api->getAccountDid(),
-        "collection" => "app.bsky.feed.post",
-        "record"     => [
-          '$type'      => "app.bsky.feed.post",
-          "createdAt"  => date("c"), "text" => $text
-        ]
-      ];
-
     }
 
     // post the message
     return $this->api->request('POST', 'com.atproto.repo.createRecord', $args);
+
   }
+
+
+
+  // public function publish( $text )
+  // {
+  //   $this->checkDupe( $text );
+  //   //Get the URL from the text
+  //   preg_match_all('#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $text, $matches);
+  //
+  //   if (!empty($matches[0][0]) ) {
+  //
+  //     $url  = $matches[0][0];
+  //     //$text = trim(preg_replace('/#\w+\s*/', '', $text)); // remove hashtags, trim
+  //
+  //     $args = [
+  //       "repo"       => $this->api->getAccountDid(),
+  //       "collection" => "app.bsky.feed.post",
+  //       "record"     => [
+  //         '$type'      => "app.bsky.feed.post",
+  //         "langs"      => [$this->lang],
+  //         "createdAt"  => date("c"),
+  //         "text"       => $text,
+  //         "facets"     => [[
+  //           "index"      => [
+  //             "byteStart"  =>  strpos($text,'https:'),
+  //             "byteEnd"    =>  (strpos($text,'https:')+strlen($url))
+  //           ],
+  //           "features"   =>  [[
+  //             "uri"        =>  $url,
+  //             '$type'      =>  "app.bsky.richtext.facet#link"
+  //           ]]
+  //         ]]
+  //       ]
+  //     ];
+  //
+  //     $embed = $this->getEmbedCard($url);
+  //
+  //     if( $embed ) {
+  //       $args['record']['embed'] = $embed;
+  //     }
+  //
+  //   } else {
+  //     // We won't try to do anything clever with this
+  //
+  //     $args = [
+  //       "repo"       => $this->api->getAccountDid(),
+  //       "collection" => "app.bsky.feed.post",
+  //       "record"     => [
+  //         '$type'      => "app.bsky.feed.post",
+  //         "langs"      => [$this->lang],
+  //         "createdAt"  => date("c"),
+  //         "text"       => $text
+  //       ]
+  //     ];
+  //
+  //   }
+  //
+  //   // post the message
+  //   return $this->api->request('POST', 'com.atproto.repo.createRecord', $args);
+  // }
 
 }
 
